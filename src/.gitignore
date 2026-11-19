@@ -310,7 +310,7 @@
 /email/text/org-invite.ftl
 /email/text/password-reset.ftl
 
-# === @keycloakify/keycloak-ui-shared v260700.0.2 ===
+# === @keycloakify/keycloak-ui-shared v260700.0.3 ===
 /shared/SessionExpirationWarningOverlay.tsx
 /shared/keycloak-ui-shared/index.ts
 /shared/keycloak-ui-shared/main.ts
@@ -380,4 +380,4 @@
 /shared/keycloak-ui-shared/controls/table/PaginatingTableToolbar.tsx
 /shared/keycloak-ui-shared/controls/table/TableToolbar.tsx
 
-# === @keycloakify/keycloak-account-ui v260700.0.3 ===
+# === @keycloakify/keycloak-account-ui v260700.0.4 ===

@@ -23,7 +23,7 @@
         "react-dom": "^18.2.0",
         "yarn": "^1.22.22",
         "@keycloakify/keycloak-account-ui": "~260700.0.3",
-        "@keycloakify/keycloak-ui-shared": "~260700.0.2",
+        "@keycloakify/keycloak-ui-shared": "~260700.0.3",
         "@patternfly/patternfly": "^5.4.2",
         "@patternfly/react-core": "^5.4.14",
         "@patternfly/react-icons": "^5.4.2",
@@ -36,7 +36,7 @@
         "react-router-dom": "^6.30.4",
         "@keycloak/keycloak-admin-client": "26.7.0",
         "@patternfly/react-styles": "^5.4.1",
-        "oidc-spa": "~10.2.10",
+        "oidc-spa": "~10.2.17",
         "@keycloakify/email-native": "~260007.0.0"
     },
     "devDependencies": {
