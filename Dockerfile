@@ -1,4 +1,4 @@
-ARG  KEYCLOAK_VERSION=26.7.4
+ARG KEYCLOAK_VERSION=26.7.3
 
 
 # Build the Keycloak theme and package it into a JAR file
@@ -12,17 +12,12 @@ RUN yarn install --frozen-lockfile
 RUN yarn build-keycloak-theme
 
 
-
 FROM quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} AS builder
 
-WORKDIR /opt/keycloak
-COPY --from=theme-builder /app/dist_keycloak/keycloak-theme-for-kc-all-other-versions.jar /opt/keycloak/providers/
-RUN /opt/keycloak/bin/kc.sh build
+# No keystore needed: TLS is terminated at the nginx ingress (Let's Encrypt via cert-manager)
 
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start", "--optimized"]
-
-
-FROM quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} AS prod-bulilder
+# Build-time options only. Runtime options (hostname, DB host, credentials)
+# are provided by the Keycloak CR / Kubernetes Secrets, never baked into the image.
 
 # Enable health and metrics support
 ENV KC_HEALTH_ENABLED=true
@@ -33,26 +28,16 @@ ENV KC_DB=postgres
 
 WORKDIR /opt/keycloak
 
-
 COPY --from=theme-builder /app/dist_keycloak/keycloak-theme-for-kc-all-other-versions.jar /opt/keycloak/providers/
-
-# for demonstration purposes only, please make sure to use proper certificates in production instead
-RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" -keystore conf/server.keystore
 
 RUN /opt/keycloak/bin/kc.sh build
 
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
 
 
 FROM quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
 
-COPY --from=prod-bulilder /opt/keycloak/ /opt/keycloak/
+COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
-# change these values to point to a running postgres instance
-# Values of
-# ENV KC_DB=postgres
-# ENV KC_DB_URL=<DBURL>
-# ENV KC_DB_USERNAME=<DBUSERNAME>
-# ENV KC_DB_PASSWORD=<DBPASSWORD>
-# ENV KC_HOSTNAME=localhost
-
+# The operator runs `start --optimized` when spec.startOptimized is true
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
