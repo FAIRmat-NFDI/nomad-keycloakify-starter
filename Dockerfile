@@ -1,6 +1,7 @@
 ARG KEYCLOAK_VERSION=26.7.3
 
 
+
 # Build the Keycloak theme and package it into a JAR file
 FROM node:20-alpine AS theme-builder
 
@@ -12,12 +13,9 @@ RUN yarn install --frozen-lockfile
 RUN yarn build-keycloak-theme
 
 
+# Build the Keycloak image with the theme JAR file included
 FROM quay.io/keycloak/keycloak:${KEYCLOAK_VERSION} AS builder
 
-# No keystore needed: TLS is terminated at the nginx ingress (Let's Encrypt via cert-manager)
-
-# Build-time options only. Runtime options (hostname, DB host, credentials)
-# are provided by the Keycloak CR / Kubernetes Secrets, never baked into the image.
 
 # Enable health and metrics support
 ENV KC_HEALTH_ENABLED=true
@@ -30,11 +28,15 @@ WORKDIR /opt/keycloak
 
 COPY --from=theme-builder /app/dist_keycloak/keycloak-theme-for-kc-all-other-versions.jar /opt/keycloak/providers/
 
+# Build-time options only. Runtime options (hostname, DB host, credentials)
+# are provided by the Keycloak CR / Kubernetes Secrets, never baked into the image.
+# No keystore needed: TLS is terminated at the nginx ingress (Let's Encrypt via cert-manager)
 RUN /opt/keycloak/bin/kc.sh build
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
 
 
+# Final image for production use
 FROM quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
 
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
