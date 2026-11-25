@@ -5,11 +5,15 @@
 # account/KcPage.tsx
 # email/theme.properties
 # account/assets/logo.svg
+# account/personal-info/PersonalInfo.tsx
 # account/root/header.module.css
+# account/root/PageNav.tsx
+# account/root/Root.tsx
 # email/html/email-test.ftl
 # email/html/email-verification.ftl
 # email/text/email-test.ftl
 # email/text/email-verification.ftl
+# shared/keycloak-ui-shared/scroll-form/ScrollForm.tsx
 # === Owned files end =====
 
 # === @keycloakify/email-native v260007.0.0 ===
@@ -108,7 +112,6 @@
 /shared/keycloak-ui-shared/scroll-form/FormPanel.tsx
 /shared/keycloak-ui-shared/scroll-form/FormTitle.tsx
 /shared/keycloak-ui-shared/scroll-form/scroll-form.module.css
-/shared/keycloak-ui-shared/scroll-form/ScrollForm.tsx
 /shared/keycloak-ui-shared/scroll-form/ScrollPanel.tsx
 /shared/keycloak-ui-shared/select/KeycloakSelect.tsx
 /shared/keycloak-ui-shared/select/SingleSelect.tsx
@@ -211,7 +214,6 @@
 /account/i18n/messages_zh_Hans.properties
 /account/i18n/messages_zh_Hant.properties
 /account/organizations/Organizations.tsx
-/account/personal-info/PersonalInfo.tsx
 /account/resources/EditTheResource.tsx
 /account/resources/PermissionRequest.tsx
 /account/resources/Resources.tsx
@@ -220,8 +222,6 @@
 /account/resources/SharedWith.tsx
 /account/resources/ShareTheResource.tsx
 /account/root/Header.tsx
-/account/root/PageNav.tsx
-/account/root/Root.tsx
 /account/utils/formatDate.ts
 /account/utils/joinPath.ts
 /account/utils/useAccountAlerts.ts
