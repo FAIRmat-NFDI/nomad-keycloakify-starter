@@ -1,0 +1,617 @@
+@import url("https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+
+/*
+ * NOMAD style for the Keycloak Account Console (PatternFly 5).
+ *
+ * Values are taken from the NOMAD GUI's MUI theme (nomad-lab.eu):
+ *   Titillium Web, primary #2A4CDF / dark #192E86, background #F8F8FA,
+ *   paper #FFFFFF, text #1D1D1D / #666666, 8px radii, bold uppercase buttons,
+ *   white app bar + white 240px nav drawer, grey content pane with a rounded
+ *   top-left corner, page content in outlined "paper" cards.
+ *
+ * Every component rule is prefixed with `:root` to out-rank PatternFly's own
+ * selectors regardless of stylesheet load order (route chunks are lazy-loaded
+ * and can inject PatternFly component CSS after this file).
+ */
+
+/* ------------------------------------------------------------------ */
+/* 1. Design tokens (light / dark), mirroring the NOMAD MUI palettes   */
+/* ------------------------------------------------------------------ */
+:root {
+    --nomad-font: "Titillium Web", "Helvetica Neue", Arial, sans-serif;
+    --nomad-radius: 8px;
+    --nomad-corner: 16px;
+    --nomad-nav-width: 240px;
+    --nomad-appbar-height: 56px;
+
+    --nomad-primary: #2a4cdf;
+    --nomad-primary-dark: #192e86;
+    --nomad-on-primary: #ffffff;
+    --nomad-primary-selected: rgba(42, 76, 223, 0.08); /* MUI selected */
+    --nomad-primary-hover: rgba(42, 76, 223, 0.04); /* MUI outlined hover */
+    --nomad-primary-outline: rgba(42, 76, 223, 0.5); /* MUI outlined border */
+    --nomad-focus-ring: rgba(42, 76, 223, 0.25);
+
+    --nomad-bg: #f8f8fa; /* background.default */
+    --nomad-paper: #ffffff; /* background.paper */
+    --nomad-highlight: #efeff7; /* background.highlight */
+    --nomad-text: #1d1d1d;
+    --nomad-text-secondary: #666666;
+    --nomad-heading: #424242; /* grey.800 page titles */
+    --nomad-divider: rgba(0, 0, 0, 0.12);
+    --nomad-input-border: rgba(0, 0, 0, 0.23);
+    --nomad-hover: rgba(0, 0, 0, 0.04);
+    --nomad-error: #c10007;
+    --nomad-error-bg: #fef2f2;
+    --nomad-info: #1447e6;
+    --nomad-info-bg: #eff6ff;
+    --nomad-success: #007a55;
+    --nomad-success-bg: #ecfdf5;
+    --nomad-shadow-1: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+        0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    --nomad-shadow-menu: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14),
+        0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+:root.pf-v5-theme-dark {
+    --nomad-primary: #8b8cec;
+    --nomad-primary-dark: #6162a5;
+    --nomad-on-primary: #121212;
+    --nomad-primary-selected: rgba(139, 140, 236, 0.16);
+    --nomad-primary-hover: rgba(139, 140, 236, 0.08);
+    --nomad-primary-outline: rgba(139, 140, 236, 0.5);
+    --nomad-focus-ring: rgba(139, 140, 236, 0.35);
+
+    --nomad-bg: #121212;
+    --nomad-paper: #1c2026;
+    --nomad-highlight: #25262d;
+    --nomad-text: rgba(255, 255, 255, 0.85);
+    --nomad-text-secondary: rgba(255, 255, 255, 0.7);
+    --nomad-heading: #bdbdbd; /* grey.400 */
+    --nomad-divider: rgba(255, 255, 255, 0.12);
+    --nomad-input-border: rgba(255, 255, 255, 0.23);
+    --nomad-hover: rgba(255, 255, 255, 0.08);
+    --nomad-error: #ffc9c9;
+    --nomad-error-bg: #5c1a1f;
+    --nomad-info: #ccf0ff;
+    --nomad-info-bg: #263340;
+    --nomad-success: #c4ffe0;
+    --nomad-success-bg: #37674c;
+    --nomad-shadow-1: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Map tokens onto PatternFly globals                               */
+/* ------------------------------------------------------------------ */
+/*
+ * PatternFly renders the masthead and sidebar in a "dark context" that
+ * redefines these globals locally, so they are reset on those elements too.
+ */
+:root,
+:root .pf-v5-c-masthead,
+:root .pf-v5-c-masthead .pf-v5-c-button.pf-m-plain,
+:root .pf-v5-c-page__sidebar {
+    --pf-v5-global--FontFamily--text: var(--nomad-font);
+    --pf-v5-global--FontFamily--heading: var(--nomad-font);
+    --pf-v5-global--FontFamily--sans-serif: var(--nomad-font);
+    --pf-v5-global--FontFamily--redhat-updated--sans-serif: var(--nomad-font);
+    --pf-v5-global--FontFamily--redhat-updated--heading--sans-serif: var(--nomad-font);
+
+    --pf-v5-global--primary-color--100: var(--nomad-primary);
+    --pf-v5-global--primary-color--200: var(--nomad-primary-dark);
+    --pf-v5-global--active-color--100: var(--nomad-primary);
+    --pf-v5-global--link--Color: var(--nomad-primary);
+    --pf-v5-global--link--Color--hover: var(--nomad-primary-dark);
+    --pf-v5-global--Color--100: var(--nomad-text);
+    --pf-v5-global--Color--200: var(--nomad-text-secondary);
+    --pf-v5-global--BackgroundColor--100: var(--nomad-paper);
+    --pf-v5-global--BackgroundColor--200: var(--nomad-bg);
+    --pf-v5-global--BorderColor--100: var(--nomad-divider);
+    --pf-v5-global--icon--Color--light: var(--nomad-text-secondary);
+    --pf-v5-global--icon--Color--dark: var(--nomad-text);
+    --pf-v5-global--danger-color--100: var(--nomad-error);
+    --pf-v5-global--BorderRadius--sm: var(--nomad-radius);
+}
+
+:root .pf-v5-c-masthead .pf-v5-c-button,
+:root .pf-v5-c-page__sidebar .pf-v5-c-button {
+    --pf-v5-c-button--m-primary--BackgroundColor: var(--nomad-primary);
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Base                                                             */
+/* ------------------------------------------------------------------ */
+:root body {
+    font-family: var(--nomad-font);
+    color: var(--nomad-text);
+    background-color: var(--nomad-paper);
+    -webkit-font-smoothing: antialiased;
+}
+
+:root a:not(.pf-v5-c-button):not(.pf-v5-c-nav__link) {
+    color: var(--nomad-primary);
+}
+:root a:not(.pf-v5-c-button):not(.pf-v5-c-nav__link):hover {
+    color: var(--nomad-primary-dark);
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. App shell: white app bar + white nav, grey rounded content pane  */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-page {
+    --pf-v5-c-page--BackgroundColor: var(--nomad-paper);
+    background-color: var(--nomad-paper);
+}
+
+:root .pf-v5-c-masthead {
+    --pf-v5-c-masthead--BackgroundColor: var(--nomad-paper);
+    --pf-v5-c-masthead__main--before--BorderBottomColor: transparent;
+    --pf-v5-c-masthead--c-toolbar--BackgroundColor: var(--nomad-paper);
+    --pf-v5-c-masthead--c-menu-toggle--before--BorderTopColor: transparent;
+    --pf-v5-c-masthead--c-menu-toggle--before--BorderRightColor: transparent;
+    --pf-v5-c-masthead--c-menu-toggle--before--BorderBottomColor: transparent;
+    --pf-v5-c-masthead--c-menu-toggle--before--BorderLeftColor: transparent;
+    min-height: var(--nomad-appbar-height);
+    color: var(--nomad-text);
+    border-bottom: none;
+    box-shadow: none;
+}
+
+:root .pf-v5-c-masthead .pf-v5-c-menu-toggle {
+    --pf-v5-c-menu-toggle--Color: var(--nomad-text);
+    --pf-v5-c-menu-toggle--BackgroundColor: transparent;
+    --pf-v5-c-menu-toggle--hover--BackgroundColor: var(--nomad-hover);
+    --pf-v5-c-menu-toggle--expanded--BackgroundColor: var(--nomad-hover);
+    border-radius: var(--nomad-radius);
+}
+:root .pf-v5-c-masthead .pf-v5-c-menu-toggle::before {
+    border: none;
+}
+
+/* user avatar: small round chip like NOMAD's initial avatar */
+:root .pf-v5-c-masthead .pf-v5-c-avatar {
+    --pf-v5-c-avatar--Width: 28px;
+    --pf-v5-c-avatar--Height: 28px;
+    border-radius: 50%;
+    background-color: var(--nomad-primary-selected);
+}
+
+/* the "Back to <app>" referrer link in the top bar */
+:root .pf-v5-c-masthead .pf-v5-c-button.pf-m-link {
+    --pf-v5-c-button--m-link--Color: var(--nomad-primary);
+    --pf-v5-c-button--m-link--hover--Color: var(--nomad-primary-dark);
+    font-weight: 600;
+}
+
+:root .pf-v5-c-page__sidebar {
+    --pf-v5-c-page__sidebar--BackgroundColor: var(--nomad-paper);
+    --pf-v5-c-page__sidebar--Width: var(--nomad-nav-width);
+    --pf-v5-c-page__sidebar--xl--Width: var(--nomad-nav-width);
+    --pf-v5-c-page__sidebar-body--PaddingTop: 4px;
+    color: var(--nomad-text);
+    background-color: var(--nomad-paper);
+}
+
+:root .pf-v5-c-page__main {
+    background-color: var(--nomad-bg);
+}
+
+@media (min-width: 1200px) {
+    :root .pf-v5-c-page__sidebar {
+        --pf-v5-c-page__sidebar--BoxShadow: none;
+        box-shadow: none;
+    }
+    /* NOMAD's signature rounded corner where app bar, nav and content meet */
+    :root .pf-v5-c-page__main {
+        border-top-left-radius: var(--nomad-corner);
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Navigation: rounded 46px items, soft-blue selected state         */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-nav {
+    --pf-v5-c-nav--BackgroundColor: transparent;
+    --pf-v5-c-nav__list--PaddingTop: 0;
+    --pf-v5-c-nav__link--PaddingTop: 0;
+    --pf-v5-c-nav__link--PaddingBottom: 0;
+    --pf-v5-c-nav__link--PaddingLeft: 12px;
+    --pf-v5-c-nav__link--PaddingRight: 12px;
+    --pf-v5-c-nav__link--FontSize: 16px;
+    --pf-v5-c-nav__link--Color: var(--nomad-text);
+    --pf-v5-c-nav__link--hover--Color: var(--nomad-text);
+    --pf-v5-c-nav__link--focus--Color: var(--nomad-text);
+    --pf-v5-c-nav__link--active--Color: var(--nomad-text);
+    --pf-v5-c-nav__link--m-current--Color: var(--nomad-primary);
+    --pf-v5-c-nav__link--BackgroundColor: transparent;
+    --pf-v5-c-nav__link--hover--BackgroundColor: var(--nomad-hover);
+    --pf-v5-c-nav__link--focus--BackgroundColor: var(--nomad-hover);
+    --pf-v5-c-nav__link--active--BackgroundColor: var(--nomad-hover);
+    --pf-v5-c-nav__link--m-current--BackgroundColor: var(--nomad-primary-selected);
+    --pf-v5-c-nav__item--m-current--not--m-expanded__link--BackgroundColor: var(--nomad-primary-selected);
+    --pf-v5-c-nav__link--before--BorderColor: transparent;
+    --pf-v5-c-nav__link--after--BorderColor: transparent;
+    --pf-v5-c-nav__link--m-current--after--BorderColor: transparent;
+    --pf-v5-c-nav__item--before--BorderColor: transparent;
+    --pf-v5-c-nav__subnav__link--hover--after--BorderColor: transparent;
+    --pf-v5-c-nav__subnav__link--focus--after--BorderColor: transparent;
+    --pf-v5-c-nav__subnav__link--active--after--BorderColor: transparent;
+    --pf-v5-c-nav__subnav__link--m-current--after--BorderColor: transparent;
+    --pf-v5-c-nav__subnav--PaddingBottom: 0;
+    --pf-v5-c-nav__section-title--Color: var(--nomad-text-secondary);
+    --pf-v5-c-nav__toggle-icon--Color: var(--nomad-text-secondary);
+    background-color: transparent;
+}
+
+:root .pf-v5-c-nav__link {
+    min-height: 46px;
+    align-items: center;
+    margin: 0 8px;
+    border-radius: var(--nomad-radius);
+    font-family: var(--nomad-font);
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+:root .pf-v5-c-nav__link::before,
+:root .pf-v5-c-nav__link::after {
+    border: none;
+}
+
+:root .pf-v5-c-nav__link.pf-m-current,
+:root .pf-v5-c-nav__item.pf-m-current:not(.pf-m-expanded) > .pf-v5-c-nav__link {
+    color: var(--nomad-primary);
+    font-weight: 700;
+    background-color: var(--nomad-primary-selected);
+}
+
+/* expanded group (e.g. "Account security"): indent like nested NOMAD items */
+:root .pf-v5-c-nav__subnav {
+    --pf-v5-c-nav__subnav--PaddingLeft: 12px;
+}
+:root .pf-v5-c-nav__subnav::before {
+    border: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. Page content: title row + outlined paper card                    */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-page__main-section {
+    --pf-v5-c-page__main-section--BackgroundColor: transparent;
+    --pf-v5-c-page__main-section--m-light--BackgroundColor: transparent;
+    --pf-v5-c-page__main-section--PaddingTop: 8px;
+    --pf-v5-c-page__main-section--PaddingBottom: 8px;
+    --pf-v5-c-page__main-section--PaddingLeft: 24px;
+    --pf-v5-c-page__main-section--PaddingRight: 24px;
+    --pf-v5-c-page__main-section--xl--PaddingTop: 8px;
+    --pf-v5-c-page__main-section--xl--PaddingBottom: 8px;
+    --pf-v5-c-page__main-section--xl--PaddingLeft: 24px;
+    --pf-v5-c-page__main-section--xl--PaddingRight: 24px;
+    background-color: transparent;
+}
+
+/* page title row ("Personal info", "Signing in", ...) */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child {
+    padding-top: 16px;
+}
+
+/* the page body sits in a white, outlined, 8px-rounded paper card */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section + .pf-v5-c-page__main-section {
+    margin: 8px 24px 24px;
+    padding: 16px;
+    background-color: var(--nomad-paper);
+    border: 1px solid var(--nomad-divider);
+    border-radius: var(--nomad-radius);
+    box-shadow: var(--nomad-shadow-1);
+}
+
+@media (min-width: 1200px) {
+    :root .pf-v5-c-page__main > .pf-v5-c-page__main-section + .pf-v5-c-page__main-section {
+        padding: 24px;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* 7. Typography (NOMAD scale: h1 26 / h2 20 / h3 18 / h4 15, bold)    */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-title,
+:root .pf-v5-c-content h1,
+:root .pf-v5-c-content h2,
+:root .pf-v5-c-content h3,
+:root .pf-v5-c-content h4 {
+    font-family: var(--nomad-font);
+    color: var(--nomad-text);
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+/* page heading = NOMAD PageActions title: 18px, 600, grey.800 */
+:root [data-testid="page-heading"],
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--nomad-heading);
+    margin-bottom: 2px;
+}
+
+:root .pf-v5-c-title.pf-m-xl,
+:root .pf-v5-c-title.pf-m-2xl,
+:root .pf-v5-c-content h2 {
+    font-size: 20px;
+}
+:root .pf-v5-c-title.pf-m-lg,
+:root .pf-v5-c-content h3 {
+    font-size: 18px;
+}
+:root .pf-v5-c-title.pf-m-md,
+:root .pf-v5-c-content h4 {
+    font-size: 15px;
+}
+
+:root .pf-v5-c-content {
+    --pf-v5-c-content--Color: var(--nomad-text);
+    --pf-v5-c-content--a--Color: var(--nomad-primary);
+    --pf-v5-c-content--a--hover--Color: var(--nomad-primary-dark);
+}
+:root .pf-v5-c-content p,
+:root .pf-v5-c-content small,
+:root .pf-v5-c-helper-text,
+:root .pf-v5-c-form__helper-text {
+    color: var(--nomad-text-secondary);
+}
+
+/* ------------------------------------------------------------------ */
+/* 8. Forms: MUI-outlined-style fields                                 */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-form {
+    --pf-v5-c-form--GridGap: 20px;
+}
+
+:root .pf-v5-c-form__label,
+:root .pf-v5-c-form__label-text {
+    font-family: var(--nomad-font);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--nomad-text-secondary);
+}
+:root .pf-v5-c-form__label-required {
+    color: var(--nomad-error);
+}
+
+:root .pf-v5-c-form-control {
+    --pf-v5-c-form-control--before--BorderStyle: solid;
+    --pf-v5-c-form-control--before--BorderTopColor: var(--nomad-input-border);
+    --pf-v5-c-form-control--before--BorderRightColor: var(--nomad-input-border);
+    --pf-v5-c-form-control--before--BorderBottomColor: var(--nomad-input-border);
+    --pf-v5-c-form-control--before--BorderLeftColor: var(--nomad-input-border);
+    --pf-v5-c-form-control--after--BorderBottomColor: transparent;
+    --pf-v5-c-form-control--hover--after--BorderBottomColor: transparent;
+    --pf-v5-c-form-control--focus--after--BorderBottomColor: transparent;
+    font-family: var(--nomad-font);
+    color: var(--nomad-text);
+    background-color: var(--nomad-paper);
+    border-radius: var(--nomad-radius);
+}
+:root .pf-v5-c-form-control::before,
+:root .pf-v5-c-form-control::after {
+    border-radius: var(--nomad-radius);
+}
+:root .pf-v5-c-form-control:hover::before {
+    border-color: var(--nomad-text);
+}
+:root .pf-v5-c-form-control:focus-within::before {
+    border-color: var(--nomad-primary);
+    border-width: 2px;
+}
+
+:root .pf-v5-c-form-control.pf-m-readonly,
+:root .pf-v5-c-form-control.pf-m-disabled {
+    background-color: var(--nomad-highlight);
+    color: var(--nomad-text-secondary);
+}
+:root .pf-v5-c-form-control.pf-m-readonly:hover::before,
+:root .pf-v5-c-form-control.pf-m-disabled:hover::before {
+    border-color: var(--nomad-input-border);
+}
+
+:root .pf-v5-c-form-control.pf-m-error::before,
+:root .pf-v5-c-form-control.pf-m-error:hover::before {
+    border-color: var(--nomad-error);
+}
+:root .pf-v5-c-helper-text__item.pf-m-error {
+    color: var(--nomad-error);
+}
+
+:root .pf-v5-c-check__input,
+:root .pf-v5-c-radio__input {
+    accent-color: var(--nomad-primary);
+}
+:root .pf-v5-c-switch {
+    --pf-v5-c-switch__input--checked__toggle--BackgroundColor: var(--nomad-primary);
+}
+
+/* ------------------------------------------------------------------ */
+/* 9. Buttons: MUI style, bold uppercase, 8px radius, no elevation     */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-button {
+    --pf-v5-c-button--BorderRadius: var(--nomad-radius);
+    --pf-v5-c-button--after--BorderRadius: var(--nomad-radius);
+    --pf-v5-c-button--FontWeight: 700;
+    --pf-v5-c-button--PaddingTop: 6px;
+    --pf-v5-c-button--PaddingBottom: 6px;
+    --pf-v5-c-button--PaddingLeft: 16px;
+    --pf-v5-c-button--PaddingRight: 16px;
+    font-family: var(--nomad-font);
+}
+
+:root .pf-v5-c-button:is(.pf-m-primary, .pf-m-secondary, .pf-m-tertiary, .pf-m-danger, .pf-m-warning) {
+    font-size: 14px;
+    line-height: 1.75;
+    letter-spacing: 0.02857em;
+    text-transform: uppercase;
+}
+
+/* contained */
+:root .pf-v5-c-button.pf-m-primary {
+    --pf-v5-c-button--m-primary--BackgroundColor: var(--nomad-primary);
+    --pf-v5-c-button--m-primary--Color: var(--nomad-on-primary);
+    --pf-v5-c-button--m-primary--hover--BackgroundColor: var(--nomad-primary-dark);
+    --pf-v5-c-button--m-primary--hover--Color: var(--nomad-on-primary);
+    --pf-v5-c-button--m-primary--focus--BackgroundColor: var(--nomad-primary-dark);
+    --pf-v5-c-button--m-primary--focus--Color: var(--nomad-on-primary);
+    --pf-v5-c-button--m-primary--active--BackgroundColor: var(--nomad-primary-dark);
+    --pf-v5-c-button--m-primary--active--Color: var(--nomad-on-primary);
+}
+
+/* outlined */
+:root .pf-v5-c-button.pf-m-secondary:not(.pf-m-danger) {
+    --pf-v5-c-button--m-secondary--Color: var(--nomad-primary);
+    --pf-v5-c-button--m-secondary--BackgroundColor: transparent;
+    --pf-v5-c-button--m-secondary--after--BorderColor: var(--nomad-primary-outline);
+    --pf-v5-c-button--m-secondary--hover--Color: var(--nomad-primary);
+    --pf-v5-c-button--m-secondary--hover--BackgroundColor: var(--nomad-primary-hover);
+    --pf-v5-c-button--m-secondary--hover--after--BorderColor: var(--nomad-primary);
+    --pf-v5-c-button--m-secondary--focus--Color: var(--nomad-primary);
+    --pf-v5-c-button--m-secondary--focus--BackgroundColor: var(--nomad-primary-hover);
+    --pf-v5-c-button--m-secondary--focus--after--BorderColor: var(--nomad-primary);
+    --pf-v5-c-button--m-secondary--active--Color: var(--nomad-primary);
+    --pf-v5-c-button--m-secondary--active--BackgroundColor: var(--nomad-primary-selected);
+    --pf-v5-c-button--m-secondary--active--after--BorderColor: var(--nomad-primary);
+}
+:root .pf-v5-c-button.pf-m-secondary::after,
+:root .pf-v5-c-button.pf-m-tertiary::after {
+    border-width: 1px;
+}
+
+/* neutral outlined (Cancel etc.) */
+:root .pf-v5-c-button.pf-m-tertiary {
+    --pf-v5-c-button--m-tertiary--Color: var(--nomad-text);
+    --pf-v5-c-button--m-tertiary--BackgroundColor: transparent;
+    --pf-v5-c-button--m-tertiary--after--BorderColor: var(--nomad-input-border);
+    --pf-v5-c-button--m-tertiary--hover--Color: var(--nomad-text);
+    --pf-v5-c-button--m-tertiary--hover--BackgroundColor: var(--nomad-hover);
+    --pf-v5-c-button--m-tertiary--hover--after--BorderColor: var(--nomad-text);
+}
+
+/* text / link buttons */
+:root .pf-v5-c-button.pf-m-link {
+    --pf-v5-c-button--m-link--Color: var(--nomad-primary);
+    --pf-v5-c-button--m-link--hover--Color: var(--nomad-primary-dark);
+    --pf-v5-c-button--m-link--focus--Color: var(--nomad-primary-dark);
+    --pf-v5-c-button--m-link--active--Color: var(--nomad-primary-dark);
+}
+:root .pf-v5-c-button.pf-m-link:not(.pf-m-inline) {
+    --pf-v5-c-button--m-link--hover--BackgroundColor: var(--nomad-primary-hover);
+}
+
+:root .pf-v5-c-button.pf-m-danger {
+    --pf-v5-c-button--m-danger--BackgroundColor: var(--nomad-error);
+    --pf-v5-c-button--m-danger--hover--BackgroundColor: var(--nomad-error);
+}
+
+:root .pf-v5-c-button:focus-visible {
+    outline: 2px solid var(--nomad-primary);
+    outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/* 10. Lists, tables, cards inside the content card                    */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-data-list {
+    --pf-v5-c-data-list--BackgroundColor: transparent;
+    --pf-v5-c-data-list--BorderTopColor: var(--nomad-divider);
+    --pf-v5-c-data-list__item--BackgroundColor: transparent;
+    --pf-v5-c-data-list__item--BorderBottomColor: var(--nomad-divider);
+    --pf-v5-c-data-list__item--m-selectable--hover--BackgroundColor: var(--nomad-hover);
+}
+
+:root .pf-v5-c-table {
+    --pf-v5-c-table--BackgroundColor: transparent;
+    --pf-v5-c-table--BorderColor: var(--nomad-divider);
+    --pf-v5-c-table--cell--Color: var(--nomad-text);
+}
+:root .pf-v5-c-table thead th,
+:root .pf-v5-c-table__th {
+    font-weight: 700;
+    color: var(--nomad-text);
+}
+
+:root .pf-v5-c-card {
+    --pf-v5-c-card--BackgroundColor: var(--nomad-paper);
+    --pf-v5-c-card--BoxShadow: none;
+    border: 1px solid var(--nomad-divider);
+    border-radius: var(--nomad-radius);
+}
+
+:root .pf-v5-c-expandable-section__toggle {
+    --pf-v5-c-expandable-section__toggle--Color: var(--nomad-primary);
+    --pf-v5-c-expandable-section__toggle--hover--Color: var(--nomad-primary-dark);
+}
+
+/* ------------------------------------------------------------------ */
+/* 11. Small components                                                */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-label {
+    --pf-v5-c-label--BorderRadius: var(--nomad-radius);
+    --pf-v5-c-label--BackgroundColor: var(--nomad-primary-selected);
+    --pf-v5-c-label__content--Color: var(--nomad-primary);
+    --pf-v5-c-label__content--before--BorderColor: transparent;
+    font-weight: 600;
+}
+
+:root .pf-v5-c-badge {
+    --pf-v5-c-badge--m-unread--BackgroundColor: var(--nomad-primary);
+    --pf-v5-c-badge--m-unread--Color: var(--nomad-on-primary);
+}
+
+:root .pf-v5-c-tabs {
+    --pf-v5-c-tabs__link--Color: var(--nomad-text-secondary);
+    --pf-v5-c-tabs__item--m-current__link--Color: var(--nomad-primary);
+    --pf-v5-c-tabs__link--after--BorderColor: transparent;
+    --pf-v5-c-tabs__item--m-current__link--after--BorderColor: var(--nomad-primary);
+    --pf-v5-c-tabs__link--FontWeight: 700;
+}
+
+:root .pf-v5-c-alert {
+    --pf-v5-c-alert--BoxShadow: none;
+    border-radius: var(--nomad-radius);
+}
+:root .pf-v5-c-alert.pf-m-info {
+    --pf-v5-c-alert--BackgroundColor: var(--nomad-info-bg);
+    --pf-v5-c-alert--BorderTopColor: var(--nomad-info);
+    --pf-v5-c-alert__icon--Color: var(--nomad-info);
+}
+:root .pf-v5-c-alert.pf-m-success {
+    --pf-v5-c-alert--BackgroundColor: var(--nomad-success-bg);
+    --pf-v5-c-alert--BorderTopColor: var(--nomad-success);
+    --pf-v5-c-alert__icon--Color: var(--nomad-success);
+}
+:root .pf-v5-c-alert.pf-m-danger {
+    --pf-v5-c-alert--BackgroundColor: var(--nomad-error-bg);
+    --pf-v5-c-alert--BorderTopColor: var(--nomad-error);
+    --pf-v5-c-alert__icon--Color: var(--nomad-error);
+}
+
+:root .pf-v5-c-menu {
+    --pf-v5-c-menu--BackgroundColor: var(--nomad-paper);
+    --pf-v5-c-menu--BoxShadow: var(--nomad-shadow-menu);
+    --pf-v5-c-menu__item--hover--BackgroundColor: var(--nomad-hover);
+    border-radius: var(--nomad-radius);
+    overflow: hidden;
+}
+
+:root .pf-v5-c-modal-box {
+    --pf-v5-c-modal-box--BackgroundColor: var(--nomad-paper);
+    border-radius: var(--nomad-radius);
+}
+:root .pf-v5-c-modal-box__title {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+:root .pf-v5-c-empty-state__icon {
+    color: var(--nomad-primary);
+}
+
+:root .pf-v5-c-tooltip__content {
+    --pf-v5-c-tooltip__content--BackgroundColor: var(--nomad-primary-dark);
+    font-size: 13px;
+}
