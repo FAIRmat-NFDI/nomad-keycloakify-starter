@@ -16,3 +16,55 @@ body.kcBodyClass {
 .kcButtonClass {
     border-radius: 4px;
 }
+
+/* ------------------------------------------------------------------ */
+/* Dark mode: `nomad-dark` is set on <html> by KcPage.tsx              */
+/* (same palette as the account console's pf-v5-theme-dark tokens)     */
+/* ------------------------------------------------------------------ */
+html.nomad-dark {
+    color-scheme: dark;
+    --pf-global--primary-color--100: #8b8cec;
+    --pf-global--primary-color--200: #6162a5;
+    --pf-global--link--Color: #8b8cec;
+    --pf-global--link--Color--hover: #6162a5;
+    --pf-global--BackgroundColor--100: #1c2026;
+    --pf-global--BackgroundColor--200: #121212;
+    --pf-global--Color--100: rgba(255, 255, 255, 0.85);
+    --pf-global--Color--200: rgba(255, 255, 255, 0.7);
+    --pf-global--Color--300: rgba(255, 255, 255, 0.5);
+    --pf-global--palette--black-600: rgba(255, 255, 255, 0.5);
+    --pf-global--BorderColor--100: rgba(255, 255, 255, 0.12);
+    --pf-global--BorderColor--200: rgba(255, 255, 255, 0.23);
+    --pf-global--BorderColor--300: rgba(255, 255, 255, 0.23);
+    --pf-global--danger-color--100: #ffc9c9;
+    --pf-global--danger-color--200: #ffc9c9;
+}
+
+html.nomad-dark body.kcBodyClass {
+    --pf-global--primary-color--100: #8b8cec;
+    --pf-global--primary-color--200: #6162a5;
+    background-color: #121212;
+    color: var(--pf-global--Color--100);
+}
+
+html.nomad-dark .kcFormCardClass,
+html.nomad-dark .pf-c-form-control {
+    background-color: #1c2026;
+    color: var(--pf-global--Color--100);
+}
+
+html.nomad-dark .pf-c-button.pf-m-primary {
+    color: #121212;
+}
+
+/* login.css hard-codes these light colours */
+html.nomad-dark #kc-info-wrapper {
+    background-color: #25262d;
+}
+html.nomad-dark #kc-totp-secret-key {
+    background-color: #25262d;
+    color: var(--pf-global--Color--100);
+}
+html.nomad-dark .select-auth-box-parent:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
