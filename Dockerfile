@@ -26,6 +26,7 @@ ENV KC_DB=postgres
 
 WORKDIR /opt/keycloak
 
+COPY ./addons/keycloak-orcid.jar /opt/keycloak/providers/
 COPY --from=theme-builder /app/dist_keycloak/keycloak-theme-for-kc-all-other-versions.jar /opt/keycloak/providers/
 
 # Build-time options only. Runtime options (hostname, DB host, credentials)
