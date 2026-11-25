@@ -1,4 +1,5 @@
 import logoSvgUrl from "./assets/nomad.svg";
+import logoDarkSvgUrl from "./assets/nomad-dark.svg";
 import { useEffect } from "react";
 import { clsx } from "keycloakify/tools/clsx";
 import { kcSanitize } from "keycloakify/lib/kcSanitize";
@@ -57,7 +58,8 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
             <div id="kc-header" className={kcClsx("kcHeaderClass")}>
                 <div id="kc-header-wrapper" className={kcClsx("kcHeaderWrapperClass")}>
                     {/* {msg("loginTitleHtml", realm.displayNameHtml || realm.name)} */}
-                    <img src={logoSvgUrl} width={200}/>
+                    <img className="nomad-logo nomad-logo-light" src={logoSvgUrl} alt="NOMAD" />
+                    <img className="nomad-logo nomad-logo-dark" src={logoDarkSvgUrl} alt="NOMAD" />
                 </div>
             </div>
             <div className={kcClsx("kcFormCardClass")}>
