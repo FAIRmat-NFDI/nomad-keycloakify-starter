@@ -6,9 +6,10 @@
  * Values are taken from the NOMAD GUI's MUI theme (nomad-lab.eu):
  *   Titillium Web, primary #2A4CDF / dark #192E86, background #F8F8FA,
  *   paper #FFFFFF, text #1D1D1D / #666666, 8px radii, bold uppercase buttons,
- *   white app bar + white 240px nav drawer, flat grey content pane, page
- *   content centred (max 1320px) under a 26px bold title with a divider,
- *   body in outlined "paper" cards, 12px grey field labels.
+ *   white sticky app bar (no hamburger) over a grey page; a centred column
+ *   (max 1320px) with the sidebar as a 240px outlined menu card on the left
+ *   and the page title + outlined "paper" content card on the right (NOMAD's
+ *   settings layout); 12px grey field labels.
  *   Measured against nomad-lab.eu/settings/profile.
  *
  * Every component rule is prefixed with `:root` to out-rank PatternFly's own
@@ -190,7 +191,6 @@
     --pf-v5-c-page__sidebar--BackgroundColor: var(--nomad-paper);
     --pf-v5-c-page__sidebar--Width: var(--nomad-nav-width);
     --pf-v5-c-page__sidebar--xl--Width: var(--nomad-nav-width);
-    --pf-v5-c-page__sidebar-body--PaddingTop: 4px;
     color: var(--nomad-text);
     background-color: var(--nomad-paper);
 }
@@ -199,10 +199,103 @@
     background-color: var(--nomad-bg);
 }
 
-@media (min-width: 1200px) {
-    :root .pf-v5-c-page__sidebar {
-        --pf-v5-c-page__sidebar--BoxShadow: none;
-        box-shadow: none;
+/* no hamburger: the menu card is always shown */
+:root #nav-toggle,
+:root .pf-v5-c-masthead__toggle {
+    display: none !important;
+}
+
+/*
+ * NOMAD "settings" layout at every width. The PatternFly page grid is
+ * re-laid out as
+ *
+ *     | header  header  header  header |
+ *     |   .     nav     main      .    |
+ *
+ * so the sidebar becomes a 240px outlined menu card in a centred column
+ * (like NOMAD's Profile/Tokens/Appearance card) and the page title + content
+ * card sit to its right. The whole window scrolls (not just <main>), with a
+ * sticky app bar and a sticky menu card. Below 768px the card stacks above
+ * the content instead.
+ *
+ * PatternFly hides a collapsed sidebar (pf-m-collapsed, and the default
+ * state below 1200px) by sliding it off-screen; all of that is undone here.
+ */
+:root .pf-v5-c-page {
+    --nomad-gap: 16px;
+    grid-template-areas:
+        "header header header header"
+        ".      nav    main   .";
+    grid-template-columns:
+        minmax(var(--nomad-content-gutter), 1fr)
+        var(--nomad-nav-width)
+        minmax(0, calc(var(--nomad-content-max) - 2 * var(--nomad-content-gutter) - var(--nomad-nav-width) - var(--nomad-gap)))
+        minmax(var(--nomad-content-gutter), 1fr);
+    grid-template-rows: max-content 1fr;
+    column-gap: var(--nomad-gap);
+    height: auto;
+    min-height: 100vh;
+    background-color: var(--nomad-bg);
+}
+
+:root .pf-v5-c-masthead {
+    grid-area: header;
+    position: sticky;
+    top: 0;
+    z-index: 300;
+}
+
+:root .pf-v5-c-page__sidebar,
+:root .pf-v5-c-page__sidebar.pf-m-expanded,
+:root .pf-v5-c-page__sidebar.pf-m-collapsed {
+    --pf-v5-c-page__sidebar--BoxShadow: none;
+    --pf-v5-c-page__sidebar--TranslateX: 0;
+    --pf-v5-c-page__sidebar--TranslateZ: 0;
+    grid-area: nav;
+    align-self: start;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    position: sticky;
+    top: calc(var(--nomad-appbar-height) + 16px);
+    z-index: auto;
+    width: var(--nomad-nav-width);
+    max-width: none;
+    height: auto;
+    max-height: calc(100vh - var(--nomad-appbar-height) - 32px);
+    margin-top: 16px;
+    transform: none;
+    overflow-y: auto;
+    background-color: var(--nomad-paper);
+    border: 1px solid var(--nomad-divider);
+    border-radius: var(--nomad-radius);
+    box-shadow: none;
+}
+
+:root .pf-v5-c-page__main {
+    grid-area: main;
+    overflow: visible;
+    background-color: transparent;
+    padding-top: 16px;
+}
+
+/* phones: menu card on top, content below, both full width */
+@media (max-width: 767.98px) {
+    :root .pf-v5-c-page {
+        grid-template-areas:
+            "header header header"
+            ".      nav    ."
+            ".      main   .";
+        grid-template-columns: 16px minmax(0, 1fr) 16px;
+        grid-template-rows: max-content max-content 1fr;
+        column-gap: 0;
+    }
+    :root .pf-v5-c-page__sidebar,
+    :root .pf-v5-c-page__sidebar.pf-m-expanded,
+    :root .pf-v5-c-page__sidebar.pf-m-collapsed {
+        position: static;
+        width: auto;
+        max-height: none;
     }
 }
 
@@ -242,10 +335,41 @@
     background-color: transparent;
 }
 
+/* NOMAD menu card spacing: 8px inset on every side, so the highlighted
+   (current) item never touches the card edge; 4px between items */
+:root .pf-v5-c-page__sidebar-body {
+    padding: 0;
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: 8px;
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__subnav .pf-v5-c-nav__list {
+    padding: 4px 0 0 12px; /* nested items: indented, no extra right inset */
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__item {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 :root .pf-v5-c-nav__link {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
     min-height: 46px;
     align-items: center;
-    margin: 0 8px;
+    margin: 0;
     border-radius: var(--nomad-radius);
     font-family: var(--nomad-font);
     transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -264,7 +388,8 @@
 
 /* expanded group (e.g. "Account security"): indent like nested NOMAD items */
 :root .pf-v5-c-nav__subnav {
-    --pf-v5-c-nav__subnav--PaddingLeft: 12px;
+    --pf-v5-c-nav__subnav--PaddingLeft: 0;
+    padding: 0;
 }
 :root .pf-v5-c-nav__subnav::before {
     border: none;
@@ -287,26 +412,24 @@
     background-color: transparent;
 }
 
-/* every section is centred in a max-1320px container with 24px gutters */
 :root .pf-v5-c-page__main > .pf-v5-c-page__main-section {
     box-sizing: border-box;
-    width: calc(100% - 2 * var(--nomad-content-gutter));
-    max-width: calc(var(--nomad-content-max) - 2 * var(--nomad-content-gutter));
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 0;
+    margin-right: 0;
 }
 
-/* page title row ("Personal info", "Signing in", ...) with a divider under it,
-   like NOMAD's "User Settings" header */
+/* page title row ("Personal info", "Signing in", ...) = NOMAD's section
+   header row (e.g. "Personal Access Tokens"): sits right above the card,
+   top-aligned with the menu card */
 :root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child {
     margin-top: 0;
-    padding: 18px 0 6px;
-    border-bottom: 1px solid var(--nomad-divider);
+    padding: 6px 0 0;
+    border-bottom: none;
 }
 
 /* the page body sits in a white, outlined, 8px-rounded paper card */
 :root .pf-v5-c-page__main > .pf-v5-c-page__main-section + .pf-v5-c-page__main-section {
-    margin-top: 12px;
+    margin-top: 8px;
     margin-bottom: 24px;
     padding: 16px 16px 24px;
     background-color: var(--nomad-paper);
@@ -329,17 +452,20 @@
     line-height: 1.4;
 }
 
-/* page heading = NOMAD h1 ("User Settings"): 26px, 700, text colour */
+/* page heading (PF5/Title) = NOMAD section header title, e.g.
+   "Personal Access Tokens" / "User Profile": 18px, 600, grey.800 */
 :root [data-testid="page-heading"],
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child [data-ouia-component-type="PF5/Title"],
 :root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child h1 {
-    font-size: 26px;
-    font-weight: 700;
-    line-height: 1.3;
-    color: var(--nomad-text);
-    margin-bottom: 2px;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--nomad-heading);
+    margin: 0;
 }
 :root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child p {
     font-size: 14px;
+    margin-top: 0;
 }
 
 /* section headings inside the page = NOMAD "User Profile": 18px, 600, grey.800 */
