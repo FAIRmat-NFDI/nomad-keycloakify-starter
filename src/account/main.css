@@ -6,8 +6,10 @@
  * Values are taken from the NOMAD GUI's MUI theme (nomad-lab.eu):
  *   Titillium Web, primary #2A4CDF / dark #192E86, background #F8F8FA,
  *   paper #FFFFFF, text #1D1D1D / #666666, 8px radii, bold uppercase buttons,
- *   white app bar + white 240px nav drawer, grey content pane with a rounded
- *   top-left corner, page content in outlined "paper" cards.
+ *   white app bar + white 240px nav drawer, flat grey content pane, page
+ *   content centred (max 1320px) under a 26px bold title with a divider,
+ *   body in outlined "paper" cards, 12px grey field labels.
+ *   Measured against nomad-lab.eu/settings/profile.
  *
  * Every component rule is prefixed with `:root` to out-rank PatternFly's own
  * selectors regardless of stylesheet load order (route chunks are lazy-loaded
@@ -20,9 +22,10 @@
 :root {
     --nomad-font: "Titillium Web", "Helvetica Neue", Arial, sans-serif;
     --nomad-radius: 8px;
-    --nomad-corner: 16px;
     --nomad-nav-width: 240px;
     --nomad-appbar-height: 56px;
+    --nomad-content-max: 1320px; /* NOMAD page container maxWidth */
+    --nomad-content-gutter: 24px;
 
     --nomad-primary: #2a4cdf;
     --nomad-primary-dark: #192e86;
@@ -201,10 +204,6 @@
         --pf-v5-c-page__sidebar--BoxShadow: none;
         box-shadow: none;
     }
-    /* NOMAD's signature rounded corner where app bar, nav and content meet */
-    :root .pf-v5-c-page__main {
-        border-top-left-radius: var(--nomad-corner);
-    }
 }
 
 /* ------------------------------------------------------------------ */
@@ -288,25 +287,32 @@
     background-color: transparent;
 }
 
-/* page title row ("Personal info", "Signing in", ...) */
+/* every section is centred in a max-1320px container with 24px gutters */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section {
+    box-sizing: border-box;
+    width: calc(100% - 2 * var(--nomad-content-gutter));
+    max-width: calc(var(--nomad-content-max) - 2 * var(--nomad-content-gutter));
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* page title row ("Personal info", "Signing in", ...) with a divider under it,
+   like NOMAD's "User Settings" header */
 :root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child {
-    padding-top: 16px;
+    margin-top: 0;
+    padding: 18px 0 6px;
+    border-bottom: 1px solid var(--nomad-divider);
 }
 
 /* the page body sits in a white, outlined, 8px-rounded paper card */
 :root .pf-v5-c-page__main > .pf-v5-c-page__main-section + .pf-v5-c-page__main-section {
-    margin: 8px 24px 24px;
-    padding: 16px;
+    margin-top: 12px;
+    margin-bottom: 24px;
+    padding: 16px 16px 24px;
     background-color: var(--nomad-paper);
     border: 1px solid var(--nomad-divider);
     border-radius: var(--nomad-radius);
     box-shadow: var(--nomad-shadow-1);
-}
-
-@media (min-width: 1200px) {
-    :root .pf-v5-c-page__main > .pf-v5-c-page__main-section + .pf-v5-c-page__main-section {
-        padding: 24px;
-    }
 }
 
 /* ------------------------------------------------------------------ */
@@ -323,23 +329,28 @@
     line-height: 1.4;
 }
 
-/* page heading = NOMAD PageActions title: 18px, 600, grey.800 */
+/* page heading = NOMAD h1 ("User Settings"): 26px, 700, text colour */
 :root [data-testid="page-heading"],
 :root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child h1 {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--nomad-text);
+    margin-bottom: 2px;
+}
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child p {
+    font-size: 14px;
+}
+
+/* section headings inside the page = NOMAD "User Profile": 18px, 600, grey.800 */
+:root .pf-v5-c-title.pf-m-xl,
+:root .pf-v5-c-title.pf-m-2xl,
+:root .pf-v5-c-title.pf-m-lg,
+:root .pf-v5-c-content h2,
+:root .pf-v5-c-content h3 {
     font-size: 18px;
     font-weight: 600;
     color: var(--nomad-heading);
-    margin-bottom: 2px;
-}
-
-:root .pf-v5-c-title.pf-m-xl,
-:root .pf-v5-c-title.pf-m-2xl,
-:root .pf-v5-c-content h2 {
-    font-size: 20px;
-}
-:root .pf-v5-c-title.pf-m-lg,
-:root .pf-v5-c-content h3 {
-    font-size: 18px;
 }
 :root .pf-v5-c-title.pf-m-md,
 :root .pf-v5-c-content h4 {
@@ -365,12 +376,24 @@
     --pf-v5-c-form--GridGap: 20px;
 }
 
+/* field captions = NOMAD profile labels: 12px, regular, grey */
 :root .pf-v5-c-form__label,
 :root .pf-v5-c-form__label-text {
     font-family: var(--nomad-font);
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.45;
     color: var(--nomad-text-secondary);
+}
+:root .pf-v5-c-form__group-label {
+    --pf-v5-c-form__group-label--PaddingBottom: 4px;
+}
+
+/* empty values ("unavailable" in NOMAD): italic, faded */
+:root .pf-v5-c-form-control input::placeholder {
+    font-style: italic;
+    color: var(--nomad-text-secondary);
+    opacity: 0.75;
 }
 :root .pf-v5-c-form__label-required {
     color: var(--nomad-error);
