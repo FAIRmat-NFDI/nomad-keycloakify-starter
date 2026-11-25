@@ -1,20 +1,27 @@
 @import url("https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,400;0,600;0,700;1,400&display=swap");
 
 /*
- * NOMAD style for the Keycloak Account Console (PatternFly 5).
+ * NOMAD style for the Keycloak Admin Console (PatternFly 5).
  *
- * Values are taken from the NOMAD GUI's MUI theme (nomad-lab.eu):
+ * Same look as the NOMAD Account Console theme:
  *   Titillium Web, primary #2A4CDF / dark #192E86, background #F8F8FA,
  *   paper #FFFFFF, text #1D1D1D / #666666, 8px radii, bold uppercase buttons,
  *   white sticky app bar (no hamburger) over a grey page; a centred column
  *   (max 1320px) with the sidebar as a 240px outlined menu card on the left
- *   and the page title + outlined "paper" content card on the right (NOMAD's
- *   settings layout); 12px grey field labels.
- *   Measured against nomad-lab.eu/settings/profile.
+ *   and the page title + outlined "paper" content card on the right.
+ *
+ * Admin-console differences handled here:
+ *   - A page can start with a breadcrumb section and has a divider between
+ *     the page header and the body, so the header is "every main section
+ *     except the last one" and the content card is the LAST main section.
+ *   - PatternFly makes the last main section (and .pf-m-fill) flex-grow to
+ *     fill the window; that is switched off so the card ends with its
+ *     content instead of covering the whole page.
+ *   - Main sections nested inside the card (tab contents etc.) are plain.
+ *   - Toolbars, the realm selector and nav group titles in the sidebar.
  *
  * Every component rule is prefixed with `:root` to out-rank PatternFly's own
- * selectors regardless of stylesheet load order (route chunks are lazy-loaded
- * and can inject PatternFly component CSS after this file).
+ * selectors regardless of stylesheet load order.
  */
 
 /* ------------------------------------------------------------------ */
@@ -25,23 +32,23 @@
     --nomad-radius: 8px;
     --nomad-nav-width: 240px;
     --nomad-appbar-height: 56px;
-    --nomad-content-max: 1320px; /* NOMAD page container maxWidth */
+    --nomad-content-max: 1320px;
     --nomad-content-gutter: 24px;
 
     --nomad-primary: #2a4cdf;
     --nomad-primary-dark: #192e86;
     --nomad-on-primary: #ffffff;
-    --nomad-primary-selected: rgba(42, 76, 223, 0.08); /* MUI selected */
-    --nomad-primary-hover: rgba(42, 76, 223, 0.04); /* MUI outlined hover */
-    --nomad-primary-outline: rgba(42, 76, 223, 0.5); /* MUI outlined border */
+    --nomad-primary-selected: rgba(42, 76, 223, 0.08);
+    --nomad-primary-hover: rgba(42, 76, 223, 0.04);
+    --nomad-primary-outline: rgba(42, 76, 223, 0.5);
     --nomad-focus-ring: rgba(42, 76, 223, 0.25);
 
-    --nomad-bg: #f8f8fa; /* background.default */
-    --nomad-paper: #ffffff; /* background.paper */
-    --nomad-highlight: #efeff7; /* background.highlight */
+    --nomad-bg: #f8f8fa;
+    --nomad-paper: #ffffff;
+    --nomad-highlight: #efeff7;
     --nomad-text: #1d1d1d;
     --nomad-text-secondary: #666666;
-    --nomad-heading: #424242; /* grey.800 page titles */
+    --nomad-heading: #424242;
     --nomad-divider: rgba(0, 0, 0, 0.12);
     --nomad-input-border: rgba(0, 0, 0, 0.23);
     --nomad-hover: rgba(0, 0, 0, 0.04);
@@ -71,7 +78,7 @@
     --nomad-highlight: #25262d;
     --nomad-text: rgba(255, 255, 255, 0.85);
     --nomad-text-secondary: rgba(255, 255, 255, 0.7);
-    --nomad-heading: #bdbdbd; /* grey.400 */
+    --nomad-heading: #bdbdbd;
     --nomad-divider: rgba(255, 255, 255, 0.12);
     --nomad-input-border: rgba(255, 255, 255, 0.23);
     --nomad-hover: rgba(255, 255, 255, 0.08);
@@ -87,10 +94,6 @@
 /* ------------------------------------------------------------------ */
 /* 2. Map tokens onto PatternFly globals                               */
 /* ------------------------------------------------------------------ */
-/*
- * PatternFly renders the masthead and sidebar in a "dark context" that
- * redefines these globals locally, so they are reset on those elements too.
- */
 :root,
 :root .pf-v5-c-masthead,
 :root .pf-v5-c-masthead .pf-v5-c-button.pf-m-plain,
@@ -128,25 +131,20 @@
 :root body {
     font-family: var(--nomad-font);
     color: var(--nomad-text);
-    background-color: var(--nomad-paper);
+    background-color: var(--nomad-bg);
     -webkit-font-smoothing: antialiased;
 }
 
-:root a:not(.pf-v5-c-button):not(.pf-v5-c-nav__link) {
+:root a:not(.pf-v5-c-button):not(.pf-v5-c-nav__link):not(.pf-v5-c-tabs__link) {
     color: var(--nomad-primary);
 }
-:root a:not(.pf-v5-c-button):not(.pf-v5-c-nav__link):hover {
+:root a:not(.pf-v5-c-button):not(.pf-v5-c-nav__link):not(.pf-v5-c-tabs__link):hover {
     color: var(--nomad-primary-dark);
 }
 
 /* ------------------------------------------------------------------ */
-/* 4. App shell: white app bar + white nav, grey rounded content pane  */
+/* 4. App shell                                                        */
 /* ------------------------------------------------------------------ */
-:root .pf-v5-c-page {
-    --pf-v5-c-page--BackgroundColor: var(--nomad-paper);
-    background-color: var(--nomad-paper);
-}
-
 :root .pf-v5-c-masthead {
     --pf-v5-c-masthead--BackgroundColor: var(--nomad-paper);
     --pf-v5-c-masthead__main--before--BorderBottomColor: transparent;
@@ -155,10 +153,19 @@
     --pf-v5-c-masthead--c-menu-toggle--before--BorderRightColor: transparent;
     --pf-v5-c-masthead--c-menu-toggle--before--BorderBottomColor: transparent;
     --pf-v5-c-masthead--c-menu-toggle--before--BorderLeftColor: transparent;
+    grid-area: header;
+    position: sticky;
+    top: 0;
+    z-index: 300;
     min-height: var(--nomad-appbar-height);
     color: var(--nomad-text);
     border-bottom: none;
     box-shadow: none;
+}
+
+:root .pf-v5-c-masthead .pf-v5-c-toolbar {
+    --pf-v5-c-toolbar--BackgroundColor: transparent;
+    background-color: transparent;
 }
 
 :root .pf-v5-c-masthead .pf-v5-c-menu-toggle {
@@ -172,7 +179,6 @@
     border: none;
 }
 
-/* user avatar: small round chip like NOMAD's initial avatar */
 :root .pf-v5-c-masthead .pf-v5-c-avatar {
     --pf-v5-c-avatar--Width: 28px;
     --pf-v5-c-avatar--Height: 28px;
@@ -180,23 +186,10 @@
     background-color: var(--nomad-primary-selected);
 }
 
-/* the "Back to <app>" referrer link in the top bar */
 :root .pf-v5-c-masthead .pf-v5-c-button.pf-m-link {
     --pf-v5-c-button--m-link--Color: var(--nomad-primary);
     --pf-v5-c-button--m-link--hover--Color: var(--nomad-primary-dark);
     font-weight: 600;
-}
-
-:root .pf-v5-c-page__sidebar {
-    --pf-v5-c-page__sidebar--BackgroundColor: var(--nomad-paper);
-    --pf-v5-c-page__sidebar--Width: var(--nomad-nav-width);
-    --pf-v5-c-page__sidebar--xl--Width: var(--nomad-nav-width);
-    color: var(--nomad-text);
-    background-color: var(--nomad-paper);
-}
-
-:root .pf-v5-c-page__main {
-    background-color: var(--nomad-bg);
 }
 
 /* no hamburger: the menu card is always shown */
@@ -206,23 +199,14 @@
 }
 
 /*
- * NOMAD "settings" layout at every width. The PatternFly page grid is
- * re-laid out as
+ * NOMAD "settings" layout:
  *
  *     | header  header  header  header |
  *     |   .     nav     main      .    |
- *
- * so the sidebar becomes a 240px outlined menu card in a centred column
- * (like NOMAD's Profile/Tokens/Appearance card) and the page title + content
- * card sit to its right. The whole window scrolls (not just <main>), with a
- * sticky app bar and a sticky menu card. Below 768px the card stacks above
- * the content instead.
- *
- * PatternFly hides a collapsed sidebar (pf-m-collapsed, and the default
- * state below 1200px) by sliding it off-screen; all of that is undone here.
  */
 :root .pf-v5-c-page {
     --nomad-gap: 16px;
+    --pf-v5-c-page--BackgroundColor: var(--nomad-bg);
     grid-template-areas:
         "header header header header"
         ".      nav    main   .";
@@ -238,16 +222,12 @@
     background-color: var(--nomad-bg);
 }
 
-:root .pf-v5-c-masthead {
-    grid-area: header;
-    position: sticky;
-    top: 0;
-    z-index: 300;
-}
-
 :root .pf-v5-c-page__sidebar,
 :root .pf-v5-c-page__sidebar.pf-m-expanded,
 :root .pf-v5-c-page__sidebar.pf-m-collapsed {
+    --pf-v5-c-page__sidebar--BackgroundColor: var(--nomad-paper);
+    --pf-v5-c-page__sidebar--Width: var(--nomad-nav-width);
+    --pf-v5-c-page__sidebar--xl--Width: var(--nomad-nav-width);
     --pf-v5-c-page__sidebar--BoxShadow: none;
     --pf-v5-c-page__sidebar--TranslateX: 0;
     --pf-v5-c-page__sidebar--TranslateZ: 0;
@@ -266,20 +246,31 @@
     margin-top: 16px;
     transform: none;
     overflow-y: auto;
+    color: var(--nomad-text);
     background-color: var(--nomad-paper);
     border: 1px solid var(--nomad-divider);
     border-radius: var(--nomad-radius);
     box-shadow: none;
 }
 
-:root .pf-v5-c-page__main {
+/* main column: only as tall as its content (no stretching) */
+:root .pf-v5-c-page__main,
+:root .pf-v5-c-page__drawer {
     grid-area: main;
+    align-self: start;
+    min-width: 0;
+}
+:root .pf-v5-c-page__main {
+    --pf-v5-c-page__main--BackgroundColor: transparent;
+    display: flex;
+    flex-direction: column;
+    height: auto;
     overflow: visible;
     background-color: transparent;
     padding-top: 16px;
 }
 
-/* phones: menu card on top, content below, both full width */
+/* phones: menu card on top, content below */
 @media (max-width: 767.98px) {
     :root .pf-v5-c-page {
         grid-template-areas:
@@ -300,7 +291,7 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* 5. Navigation: rounded 46px items, soft-blue selected state         */
+/* 5. Navigation                                                       */
 /* ------------------------------------------------------------------ */
 :root .pf-v5-c-nav {
     --pf-v5-c-nav--BackgroundColor: transparent;
@@ -330,13 +321,14 @@
     --pf-v5-c-nav__subnav__link--active--after--BorderColor: transparent;
     --pf-v5-c-nav__subnav__link--m-current--after--BorderColor: transparent;
     --pf-v5-c-nav__subnav--PaddingBottom: 0;
+    --pf-v5-c-nav__section--MarginTop: 0;
+    --pf-v5-c-nav__section--section--MarginTop: 0;
     --pf-v5-c-nav__section-title--Color: var(--nomad-text-secondary);
+    --pf-v5-c-nav__section-title--BorderBottomColor: transparent;
     --pf-v5-c-nav__toggle-icon--Color: var(--nomad-text-secondary);
     background-color: transparent;
 }
 
-/* NOMAD menu card spacing: 8px inset on every side, so the highlighted
-   (current) item never touches the card edge; 4px between items */
 :root .pf-v5-c-page__sidebar-body {
     padding: 0;
 }
@@ -355,12 +347,55 @@
     padding: 8px;
 }
 :root .pf-v5-c-page__sidebar .pf-v5-c-nav__subnav .pf-v5-c-nav__list {
-    padding: 4px 0 0 12px; /* nested items: indented, no extra right inset */
+    padding: 4px 0 0 12px;
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__section .pf-v5-c-nav__list {
+    padding-top: 0;
 }
 :root .pf-v5-c-page__sidebar .pf-v5-c-nav__item {
     width: 100%;
     margin: 0;
     padding: 0;
+}
+
+/* admin nav groups ("Manage", "Configure"): small grey caption + divider */
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__section + .pf-v5-c-nav__section,
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__section:not(:first-child) {
+    border-top: 1px solid var(--nomad-divider);
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__section-title {
+    margin: 0;
+    padding: 12px 20px 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--nomad-text-secondary);
+    border: none;
+}
+
+/* realm selector at the top of the admin sidebar: outlined field */
+:root .pf-v5-c-page__sidebar .pf-v5-c-menu-toggle,
+:root .pf-v5-c-page__sidebar .pf-v5-c-context-selector__toggle {
+    --pf-v5-c-menu-toggle--Color: var(--nomad-text);
+    --pf-v5-c-menu-toggle--BackgroundColor: var(--nomad-paper);
+    --pf-v5-c-menu-toggle--hover--BackgroundColor: var(--nomad-hover);
+    --pf-v5-c-menu-toggle--expanded--BackgroundColor: var(--nomad-hover);
+    --pf-v5-c-menu-toggle--before--BorderTopColor: var(--nomad-input-border);
+    --pf-v5-c-menu-toggle--before--BorderRightColor: var(--nomad-input-border);
+    --pf-v5-c-menu-toggle--before--BorderBottomColor: var(--nomad-input-border);
+    --pf-v5-c-menu-toggle--before--BorderLeftColor: var(--nomad-input-border);
+    --pf-v5-c-menu-toggle--after--BorderBottomColor: transparent;
+    --pf-v5-c-menu-toggle--hover--after--BorderBottomColor: transparent;
+    --pf-v5-c-menu-toggle--expanded--after--BorderBottomColor: transparent;
+    width: 100%;
+    font-family: var(--nomad-font);
+    font-weight: 600;
+    border-radius: var(--nomad-radius);
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-menu-toggle::before,
+:root .pf-v5-c-page__sidebar .pf-v5-c-menu-toggle::after {
+    border-radius: var(--nomad-radius);
 }
 
 :root .pf-v5-c-nav__link {
@@ -386,7 +421,6 @@
     background-color: var(--nomad-primary-selected);
 }
 
-/* expanded group (e.g. "Account security"): indent like nested NOMAD items */
 :root .pf-v5-c-nav__subnav {
     --pf-v5-c-nav__subnav--PaddingLeft: 0;
     padding: 0;
@@ -396,7 +430,7 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* 6. Page content: title row + outlined paper card                    */
+/* 6. Page content: header (title row) + one outlined paper card       */
 /* ------------------------------------------------------------------ */
 :root .pf-v5-c-page__main-section {
     --pf-v5-c-page__main-section--BackgroundColor: transparent;
@@ -412,23 +446,57 @@
     background-color: transparent;
 }
 
-:root .pf-v5-c-page__main > .pf-v5-c-page__main-section {
+/*
+ * Top-level sections never grow to fill the window. PatternFly gives the
+ * last section (and .pf-m-fill) flex-grow: 1, which is what made the card
+ * cover the whole page.
+ */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section,
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-breadcrumb,
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-tabs,
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-group {
+    flex: 0 0 auto;
     box-sizing: border-box;
+    height: auto;
+    min-height: 0;
     margin-left: 0;
     margin-right: 0;
 }
 
-/* page title row ("Personal info", "Signing in", ...) = NOMAD's section
-   header row (e.g. "Personal Access Tokens"): sits right above the card,
-   top-aligned with the menu card */
-:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child {
-    margin-top: 0;
-    padding: 6px 0 0;
-    border-bottom: none;
+/* breadcrumb row above the title */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-breadcrumb {
+    --pf-v5-c-page__main-breadcrumb--BackgroundColor: transparent;
+    background-color: transparent;
+    padding: 0 0 4px;
 }
 
-/* the page body sits in a white, outlined, 8px-rounded paper card */
-:root .pf-v5-c-page__main > .pf-v5-c-page__main-section + .pf-v5-c-page__main-section {
+/* the divider PatternFly/Keycloak puts between header and body */
+:root .pf-v5-c-page__main > .pf-v5-c-divider {
+    display: none;
+}
+
+/* page header = every top-level section except the last: no card */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:not(:last-of-type) {
+    margin-top: 0;
+    padding: 6px 0 0;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:not(:last-of-type) .pf-v5-c-toolbar {
+    --pf-v5-c-toolbar--BackgroundColor: transparent;
+    --pf-v5-c-toolbar--PaddingTop: 0;
+    --pf-v5-c-toolbar--PaddingBottom: 0;
+    background-color: transparent;
+    padding: 0;
+}
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:not(:last-of-type) .pf-v5-c-toolbar__content {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* page body = the last top-level section: white outlined paper card */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:last-of-type {
     margin-top: 8px;
     margin-bottom: 24px;
     padding: 16px 16px 24px;
@@ -437,9 +505,30 @@
     border-radius: var(--nomad-radius);
     box-shadow: var(--nomad-shadow-1);
 }
+/* body that starts with tabs (pf-m-no-padding / pf-v5-u-p-0): tabs flush
+   to the top of the card, inner sections supply the padding */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:last-of-type.pf-m-no-padding {
+    padding: 0;
+}
+
+/* sections nested inside the card (tab contents etc.): plain */
+:root .pf-v5-c-page__main-section .pf-v5-c-page__main-section {
+    margin: 0;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    flex-grow: 0;
+}
+
+/* toolbars inside the card (search / action rows above tables) */
+:root .pf-v5-c-page__main .pf-v5-c-toolbar {
+    --pf-v5-c-toolbar--BackgroundColor: transparent;
+    background-color: transparent;
+}
 
 /* ------------------------------------------------------------------ */
-/* 7. Typography (NOMAD scale: h1 26 / h2 20 / h3 18 / h4 15, bold)    */
+/* 7. Typography                                                       */
 /* ------------------------------------------------------------------ */
 :root .pf-v5-c-title,
 :root .pf-v5-c-content h1,
@@ -452,23 +541,22 @@
     line-height: 1.4;
 }
 
-/* page heading (PF5/Title) = NOMAD section header title, e.g.
-   "Personal Access Tokens" / "User Profile": 18px, 600, grey.800 */
+/* page title (header section) = NOMAD section header: 18px, 600, grey.800 */
 :root [data-testid="page-heading"],
-:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child [data-ouia-component-type="PF5/Title"],
-:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child h1 {
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:not(:last-of-type) h1,
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:not(:last-of-type) [data-ouia-component-type="PF5/Title"],
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:not(:last-of-type) .pf-v5-c-content h1 {
     font-size: 18px;
     font-weight: 600;
     line-height: 1.4;
     color: var(--nomad-heading);
     margin: 0;
 }
-:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:first-child p {
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:not(:last-of-type) p {
     font-size: 14px;
     margin-top: 0;
 }
 
-/* section headings inside the page = NOMAD "User Profile": 18px, 600, grey.800 */
 :root .pf-v5-c-title.pf-m-xl,
 :root .pf-v5-c-title.pf-m-2xl,
 :root .pf-v5-c-title.pf-m-lg,
@@ -496,13 +584,12 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* 8. Forms: MUI-outlined-style fields                                 */
+/* 8. Forms                                                            */
 /* ------------------------------------------------------------------ */
 :root .pf-v5-c-form {
     --pf-v5-c-form--GridGap: 20px;
 }
 
-/* field captions = NOMAD profile labels: 12px, regular, grey */
 :root .pf-v5-c-form__label,
 :root .pf-v5-c-form__label-text {
     font-family: var(--nomad-font);
@@ -515,7 +602,6 @@
     --pf-v5-c-form__group-label--PaddingBottom: 4px;
 }
 
-/* empty values ("unavailable" in NOMAD): italic, faded */
 :root .pf-v5-c-form-control input::placeholder {
     font-style: italic;
     color: var(--nomad-text-secondary);
@@ -577,8 +663,14 @@
     --pf-v5-c-switch__input--checked__toggle--BackgroundColor: var(--nomad-primary);
 }
 
+/* sticky "Save / Revert" bar at the bottom of admin forms */
+:root .pf-v5-c-form__actions.pf-m-sticky,
+:root .keycloak__form_actions {
+    background-color: var(--nomad-paper);
+}
+
 /* ------------------------------------------------------------------ */
-/* 9. Buttons: MUI style, bold uppercase, 8px radius, no elevation     */
+/* 9. Buttons                                                          */
 /* ------------------------------------------------------------------ */
 :root .pf-v5-c-button {
     --pf-v5-c-button--BorderRadius: var(--nomad-radius);
@@ -598,7 +690,6 @@
     text-transform: uppercase;
 }
 
-/* contained */
 :root .pf-v5-c-button.pf-m-primary {
     --pf-v5-c-button--m-primary--BackgroundColor: var(--nomad-primary);
     --pf-v5-c-button--m-primary--Color: var(--nomad-on-primary);
@@ -610,7 +701,6 @@
     --pf-v5-c-button--m-primary--active--Color: var(--nomad-on-primary);
 }
 
-/* outlined */
 :root .pf-v5-c-button.pf-m-secondary:not(.pf-m-danger) {
     --pf-v5-c-button--m-secondary--Color: var(--nomad-primary);
     --pf-v5-c-button--m-secondary--BackgroundColor: transparent;
@@ -630,7 +720,6 @@
     border-width: 1px;
 }
 
-/* neutral outlined (Cancel etc.) */
 :root .pf-v5-c-button.pf-m-tertiary {
     --pf-v5-c-button--m-tertiary--Color: var(--nomad-text);
     --pf-v5-c-button--m-tertiary--BackgroundColor: transparent;
@@ -640,7 +729,6 @@
     --pf-v5-c-button--m-tertiary--hover--after--BorderColor: var(--nomad-text);
 }
 
-/* text / link buttons */
 :root .pf-v5-c-button.pf-m-link {
     --pf-v5-c-button--m-link--Color: var(--nomad-primary);
     --pf-v5-c-button--m-link--hover--Color: var(--nomad-primary-dark);
@@ -662,7 +750,7 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* 10. Lists, tables, cards inside the content card                    */
+/* 10. Lists, tables, cards                                            */
 /* ------------------------------------------------------------------ */
 :root .pf-v5-c-data-list {
     --pf-v5-c-data-list--BackgroundColor: transparent;
@@ -682,6 +770,14 @@
     font-weight: 700;
     color: var(--nomad-text);
 }
+:root .pf-v5-c-table tbody tr:hover {
+    background-color: var(--nomad-hover);
+}
+
+:root .pf-v5-c-pagination {
+    --pf-v5-c-pagination--BackgroundColor: transparent;
+    background-color: transparent;
+}
 
 :root .pf-v5-c-card {
     --pf-v5-c-card--BackgroundColor: var(--nomad-paper);
@@ -693,6 +789,13 @@
 :root .pf-v5-c-expandable-section__toggle {
     --pf-v5-c-expandable-section__toggle--Color: var(--nomad-primary);
     --pf-v5-c-expandable-section__toggle--hover--Color: var(--nomad-primary-dark);
+}
+
+/* jump links on the left of long admin forms (realm settings, clients) */
+:root .pf-v5-c-jump-links {
+    --pf-v5-c-jump-links__link--before--BorderColor: var(--nomad-divider);
+    --pf-v5-c-jump-links__item--m-current__link--before--BorderColor: var(--nomad-primary);
+    --pf-v5-c-jump-links__item--m-current__link-text--Color: var(--nomad-primary);
 }
 
 /* ------------------------------------------------------------------ */
@@ -711,12 +814,28 @@
     --pf-v5-c-badge--m-unread--Color: var(--nomad-on-primary);
 }
 
+/* tabs: the admin console's main navigation inside a page */
 :root .pf-v5-c-tabs {
+    --pf-v5-c-tabs--BackgroundColor: transparent;
+    --pf-v5-c-tabs--before--BorderColor: var(--nomad-divider);
+    --pf-v5-c-tabs__link--BackgroundColor: transparent;
     --pf-v5-c-tabs__link--Color: var(--nomad-text-secondary);
     --pf-v5-c-tabs__item--m-current__link--Color: var(--nomad-primary);
     --pf-v5-c-tabs__link--after--BorderColor: transparent;
     --pf-v5-c-tabs__item--m-current__link--after--BorderColor: var(--nomad-primary);
+    --pf-v5-c-tabs__link--hover--after--BorderColor: var(--nomad-primary-outline);
     --pf-v5-c-tabs__link--FontWeight: 700;
+}
+:root .pf-v5-c-tabs__link {
+    font-family: var(--nomad-font);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02857em;
+    font-size: 14px;
+}
+/* top tabs inside the card: keep them inside the rounded corners */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:last-of-type > .pf-v5-c-tabs:first-child {
+    padding: 0 8px;
 }
 
 :root .pf-v5-c-alert {
