@@ -19,14 +19,10 @@ const doMakeUserConfirmPassword = true;
 
 export default function KcPage(props: { kcContext: KcContext }) {
     const { kcContext } = props;
+
     const { i18n } = useI18n({ kcContext });
 
-    return (
-        <Suspense>
-            {(() => {
-                switch (kcContext.pageId) {
-                    default:
-                        return (
+    const defaultPage = (
                             <DefaultPage
                                 kcContext={kcContext}
                                 i18n={i18n}
@@ -37,6 +33,17 @@ export default function KcPage(props: { kcContext: KcContext }) {
                                 doMakeUserConfirmPassword={doMakeUserConfirmPassword}
                             />
                         );
+
+    return (
+        <Suspense>
+            {(() => {
+                switch (kcContext.pageId) {
+                    case "idp-review-user-profile.ftl":
+                        kcContext.profile.attributesByName.username.values = [];
+                        delete kcContext.profile.attributesByName.username.value;
+                        return defaultPage;
+                    default:
+                        return defaultPage;
                 }
             })()}
         </Suspense>
