@@ -5,7 +5,6 @@
 # account/KcPage.tsx
 # email/theme.properties
 # account/assets/logo.svg
-# account/personal-info/PersonalInfo.tsx
 # account/root/header.module.css
 # account/root/PageNav.tsx
 # account/root/Root.tsx
@@ -214,6 +213,7 @@
 /account/i18n/messages_zh_Hans.properties
 /account/i18n/messages_zh_Hant.properties
 /account/organizations/Organizations.tsx
+/account/personal-info/PersonalInfo.tsx
 /account/resources/EditTheResource.tsx
 /account/resources/PermissionRequest.tsx
 /account/resources/Resources.tsx
