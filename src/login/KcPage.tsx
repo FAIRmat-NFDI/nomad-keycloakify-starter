@@ -38,10 +38,17 @@ export default function KcPage(props: { kcContext: KcContext }) {
         <Suspense>
             {(() => {
                 switch (kcContext.pageId) {
-                    case "idp-review-user-profile.ftl":
-                        kcContext.profile.attributesByName.username.values = [];
-                        delete kcContext.profile.attributesByName.username.value;
+                    case "idp-review-user-profile.ftl": {
+
+                        const username = kcContext.profile.attributesByName.username;
+                        
+                        if (username !== undefined) {
+                            username.values = [];
+                            delete username.value;
+                        }
+                        
                         return defaultPage;
+                    }
                     default:
                         return defaultPage;
                 }
