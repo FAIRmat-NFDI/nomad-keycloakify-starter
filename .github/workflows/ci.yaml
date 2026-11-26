@@ -13,8 +13,8 @@ jobs:
         if: github.event.action != 'closed'
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
             - uses: bahmutov/npm-install@v1
             - run: npm run build-keycloak-theme
 
@@ -40,11 +40,11 @@ jobs:
         needs: check_if_version_upgraded
         if: needs.check_if_version_upgraded.outputs.is_upgraded_version == 'true'
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
             - uses: bahmutov/npm-install@v1
             - run: npm run build-keycloak-theme
-            - uses: softprops/action-gh-release@v2
+            - uses: softprops/action-gh-release@v3
               with:
                   name: Release v${{ needs.check_if_version_upgraded.outputs.to_version }}
                   tag_name: v${{ needs.check_if_version_upgraded.outputs.to_version }}
@@ -67,13 +67,13 @@ jobs:
             TAG: pr-${{ github.event.pull_request.number }}
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
             - uses: bahmutov/npm-install@v1
             - run: npm run build-keycloak-theme
             # Replace the previous release so the tag points at the latest PR commit
             - run: gh release delete "$TAG" --cleanup-tag --yes || true
-            - uses: softprops/action-gh-release@v2
+            - uses: softprops/action-gh-release@v3
               with:
                   name: PR #${{ github.event.pull_request.number }} (${{ github.event.pull_request.head.sha }})
                   tag_name: ${{ env.TAG }}
