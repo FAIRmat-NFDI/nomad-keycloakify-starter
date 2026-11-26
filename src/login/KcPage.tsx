@@ -39,14 +39,22 @@ export default function KcPage(props: { kcContext: KcContext }) {
             {(() => {
                 switch (kcContext.pageId) {
                     case "idp-review-user-profile.ftl": {
+                        const { profile, messagesPerField, message } = kcContext;
+
+                        const hasValidationErrors =
+                            message?.type === "error" ||
+                            messagesPerField.existsError(
+                                "global",
+                                ...Object.keys(profile.attributesByName)
+                            );
 
                         const username = kcContext.profile.attributesByName.username;
-                        
-                        if (username !== undefined) {
+
+                        if (username !== undefined && !hasValidationErrors) {
                             username.values = [];
                             delete username.value;
                         }
-                        
+
                         return defaultPage;
                     }
                     default:
