@@ -7,7 +7,8 @@ export default defineConfig({
     plugins: [
         react(),
         keycloakify({
-            accountThemeImplementation: "none"
+            themeName: ["nomad-lab", "nomad-oasis"],
+            accountThemeImplementation: "Single-Page"
         })
     ]
 });

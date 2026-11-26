@@ -1,0 +1,854 @@
+@import url("https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+
+/*
+ * NOMAD style for the Keycloak Account Console (PatternFly 5).
+ *
+ * Titillium Web, primary #2A4CDF / dark #192E86, background #F8F8FA,
+ * paper #FFFFFF, text #1D1D1D / #666666, 8px radii, bold uppercase buttons,
+ * white sticky app bar (no hamburger) over a grey page; a centred column
+ * (max 1320px) with the sidebar as a 240px outlined menu card on the left
+ * and the page title + outlined "paper" content card on the right.
+ *
+ * Fonts come from the PatternFly global font variables (section 2), which
+ * PatternFly's base CSS applies to body and form controls.
+ *
+ * Every component rule is prefixed with `:root` to out-rank PatternFly's own
+ * selectors regardless of stylesheet load order.
+ */
+
+/* ------------------------------------------------------------------ */
+/* 1. Design tokens (light / dark), mirroring the NOMAD MUI palettes   */
+/* ------------------------------------------------------------------ */
+:root {
+    --nomad-font: "Titillium Web", "Helvetica Neue", Arial, sans-serif;
+    --nomad-radius: 8px;
+    --nomad-nav-width: 240px;
+    --nomad-appbar-height: 56px;
+    --nomad-content-max: 1320px;
+    --nomad-content-gutter: 24px;
+
+    --nomad-primary: #2a4cdf;
+    --nomad-primary-dark: #192e86;
+    --nomad-on-primary: #ffffff;
+    --nomad-primary-selected: rgba(42, 76, 223, 0.08);
+    --nomad-primary-hover: rgba(42, 76, 223, 0.04);
+    --nomad-primary-outline: rgba(42, 76, 223, 0.5);
+    --nomad-focus-ring: rgba(42, 76, 223, 0.25);
+
+    --nomad-bg: #f8f8fa;
+    --nomad-paper: #ffffff;
+    --nomad-highlight: #efeff7;
+    --nomad-text: #1d1d1d;
+    --nomad-text-secondary: #666666;
+    --nomad-heading: #424242;
+    --nomad-divider: rgba(0, 0, 0, 0.12);
+    --nomad-action-active: rgba(0, 0, 0, 0.54);
+    --nomad-input-border: rgba(0, 0, 0, 0.23);
+    --nomad-hover: rgba(0, 0, 0, 0.04);
+    --nomad-error: #c10007;
+    --nomad-error-bg: #fef2f2;
+    --nomad-info: #1447e6;
+    --nomad-info-bg: #eff6ff;
+    --nomad-success: #007a55;
+    --nomad-success-bg: #ecfdf5;
+    --nomad-shadow-1: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+        0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    --nomad-shadow-menu: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14),
+        0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+:root.pf-v5-theme-dark {
+    --nomad-primary: #8b8cec;
+    --nomad-primary-dark: #6162a5;
+    --nomad-on-primary: #121212;
+    --nomad-primary-selected: rgba(139, 140, 236, 0.16);
+    --nomad-primary-hover: rgba(139, 140, 236, 0.08);
+    --nomad-primary-outline: rgba(139, 140, 236, 0.5);
+    --nomad-focus-ring: rgba(139, 140, 236, 0.35);
+
+    --nomad-bg: #121212;
+    --nomad-paper: #1c2026;
+    --nomad-highlight: #25262d;
+    --nomad-text: rgba(255, 255, 255, 0.85);
+    --nomad-text-secondary: rgba(255, 255, 255, 0.7);
+    --nomad-heading: #bdbdbd;
+    --nomad-divider: rgba(255, 255, 255, 0.12);
+    --nomad-action-active: #ffffff;
+    --nomad-input-border: rgba(255, 255, 255, 0.23);
+    --nomad-hover: rgba(255, 255, 255, 0.08);
+    --nomad-error: #ffc9c9;
+    --nomad-error-bg: #5c1a1f;
+    --nomad-info: #ccf0ff;
+    --nomad-info-bg: #263340;
+    --nomad-success: #c4ffe0;
+    --nomad-success-bg: #37674c;
+    --nomad-shadow-1: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Map tokens onto PatternFly globals                               */
+/* ------------------------------------------------------------------ */
+:root,
+:root .pf-v5-c-masthead,
+:root .pf-v5-c-masthead .pf-v5-c-button.pf-m-plain,
+:root .pf-v5-c-page__sidebar {
+    --pf-v5-global--FontFamily--text: var(--nomad-font);
+    --pf-v5-global--FontFamily--heading: var(--nomad-font);
+    --pf-v5-global--FontFamily--sans-serif: var(--nomad-font);
+    --pf-v5-global--FontFamily--redhat-updated--sans-serif: var(--nomad-font);
+    --pf-v5-global--FontFamily--redhat-updated--heading--sans-serif: var(--nomad-font);
+
+    --pf-v5-global--primary-color--100: var(--nomad-primary);
+    --pf-v5-global--primary-color--200: var(--nomad-primary-dark);
+    --pf-v5-global--active-color--100: var(--nomad-primary);
+    --pf-v5-global--link--Color: var(--nomad-primary);
+    --pf-v5-global--link--Color--hover: var(--nomad-primary-dark);
+    --pf-v5-global--Color--100: var(--nomad-text);
+    --pf-v5-global--Color--200: var(--nomad-text-secondary);
+    --pf-v5-global--BackgroundColor--100: var(--nomad-paper);
+    --pf-v5-global--BackgroundColor--200: var(--nomad-bg);
+    --pf-v5-global--BorderColor--100: var(--nomad-divider);
+    --pf-v5-global--icon--Color--light: var(--nomad-text-secondary);
+    --pf-v5-global--icon--Color--dark: var(--nomad-text);
+    --pf-v5-global--danger-color--100: var(--nomad-error);
+    --pf-v5-global--BorderRadius--sm: var(--nomad-radius);
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Base                                                             */
+/* ------------------------------------------------------------------ */
+:root body {
+    background-color: var(--nomad-bg);
+    -webkit-font-smoothing: antialiased;
+}
+
+:root a:not(.pf-v5-c-button):not(.pf-v5-c-nav__link):not(.pf-v5-c-tabs__link) {
+    color: var(--nomad-primary);
+}
+:root a:not(.pf-v5-c-button):not(.pf-v5-c-nav__link):not(.pf-v5-c-tabs__link):hover {
+    color: var(--nomad-primary-dark);
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. App shell                                                        */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-masthead {
+    --pf-v5-c-masthead--BackgroundColor: var(--nomad-paper);
+    --pf-v5-c-masthead__main--before--BorderBottomColor: transparent;
+    --pf-v5-c-masthead--c-toolbar--BackgroundColor: var(--nomad-paper);
+    --pf-v5-c-masthead--c-menu-toggle--before--BorderTopColor: transparent;
+    --pf-v5-c-masthead--c-menu-toggle--before--BorderRightColor: transparent;
+    --pf-v5-c-masthead--c-menu-toggle--before--BorderBottomColor: transparent;
+    --pf-v5-c-masthead--c-menu-toggle--before--BorderLeftColor: transparent;
+    grid-area: header;
+    position: sticky;
+    top: 0;
+    z-index: 300;
+    min-height: var(--nomad-appbar-height);
+    color: var(--nomad-text);
+    border-bottom: none;
+    box-shadow: none;
+}
+
+:root .pf-v5-c-masthead .pf-v5-c-menu-toggle {
+    --pf-v5-c-menu-toggle--Color: var(--nomad-text);
+    --pf-v5-c-menu-toggle--BackgroundColor: transparent;
+    --pf-v5-c-menu-toggle--hover--BackgroundColor: var(--nomad-hover);
+    --pf-v5-c-menu-toggle--expanded--BackgroundColor: var(--nomad-hover);
+    border-radius: var(--nomad-radius);
+}
+:root .pf-v5-c-masthead .pf-v5-c-menu-toggle::before {
+    border: none;
+}
+
+:root .pf-v5-c-masthead .pf-v5-c-avatar {
+    --pf-v5-c-avatar--Width: 28px;
+    --pf-v5-c-avatar--Height: 28px;
+    border-radius: 50%;
+    background-color: var(--nomad-primary-selected);
+}
+
+:root .pf-v5-c-masthead .pf-v5-c-button.pf-m-link {
+    font-weight: 600;
+}
+
+/* no hamburger: the menu card is always shown */
+:root #nav-toggle,
+:root .pf-v5-c-masthead__toggle {
+    display: none !important;
+}
+
+/*
+ * NOMAD "settings" layout:
+ *
+ *     | header  header  header  header |
+ *     |   .     title   title     .    |
+ *     |   .     nav     main      .    |
+ */
+:root .pf-v5-c-page {
+    --nomad-gap: 16px;
+    --pf-v5-c-page--BackgroundColor: var(--nomad-bg);
+    grid-template-areas:
+        "header header header header"
+        ".      title  title  ."
+        ".      nav    main   .";
+    grid-template-columns:
+        minmax(var(--nomad-content-gutter), 1fr)
+        var(--nomad-nav-width)
+        minmax(0, calc(var(--nomad-content-max) - 2 * var(--nomad-content-gutter) - var(--nomad-nav-width) - var(--nomad-gap)))
+        minmax(var(--nomad-content-gutter), 1fr);
+    grid-template-rows: max-content max-content 1fr;
+    column-gap: var(--nomad-gap);
+    height: auto;
+    min-height: 100vh;
+    background-color: var(--nomad-bg);
+}
+
+:root .pf-v5-c-page__sidebar,
+:root .pf-v5-c-page__sidebar.pf-m-expanded,
+:root .pf-v5-c-page__sidebar.pf-m-collapsed {
+    --pf-v5-c-page__sidebar--BackgroundColor: var(--nomad-paper);
+    --pf-v5-c-page__sidebar--Width: var(--nomad-nav-width);
+    --pf-v5-c-page__sidebar--xl--Width: var(--nomad-nav-width);
+    --pf-v5-c-page__sidebar--BoxShadow: none;
+    --pf-v5-c-page__sidebar--TranslateX: 0;
+    --pf-v5-c-page__sidebar--TranslateZ: 0;
+    grid-area: nav;
+    align-self: start;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    position: sticky;
+    top: calc(var(--nomad-appbar-height) + 16px);
+    z-index: auto;
+    width: var(--nomad-nav-width);
+    max-width: none;
+    height: auto;
+    max-height: calc(100vh - var(--nomad-appbar-height) - 32px);
+    margin-top: 12px;
+    transform: none;
+    overflow-y: auto;
+    color: var(--nomad-text);
+    background-color: var(--nomad-paper);
+    border: 1px solid var(--nomad-divider);
+    border-radius: var(--nomad-radius);
+    box-shadow: none;
+}
+
+/*
+ * NOMAD page header ("User Settings"), as on nomad-lab.eu/settings:
+ * 16px above, 16px below + divider, h1 = 26px bold, line-height 1.3em,
+ * and the description as an info icon with a tooltip.
+ */
+:root .nomad-settings-header {
+    grid-area: title;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 0;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--nomad-divider);
+}
+:root .nomad-settings-title {
+    margin: -8px 0;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.3em;
+    color: var(--nomad-text);
+}
+:root .nomad-settings-info {
+    display: inline-flex;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    color: var(--nomad-text-secondary);
+    cursor: help;
+}
+:root .nomad-settings-info svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+
+/* main column: only as tall as its content (no stretching) */
+:root .pf-v5-c-page__main,
+:root .pf-v5-c-page__drawer {
+    grid-area: main;
+    align-self: start;
+    min-width: 0;
+}
+:root .pf-v5-c-page__main {
+    --pf-v5-c-page__main--BackgroundColor: transparent;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+    background-color: transparent;
+    padding-top: 12px;
+}
+
+/* phones: menu card on top, content below */
+@media (max-width: 767.98px) {
+    :root .pf-v5-c-page {
+        grid-template-areas:
+            "header header header"
+            ".      title  ."
+            ".      nav    ."
+            ".      main   .";
+        grid-template-columns: 16px minmax(0, 1fr) 16px;
+        grid-template-rows: max-content max-content max-content 1fr;
+        column-gap: 0;
+    }
+    :root .pf-v5-c-page__sidebar,
+    :root .pf-v5-c-page__sidebar.pf-m-expanded,
+    :root .pf-v5-c-page__sidebar.pf-m-collapsed {
+        position: static;
+        width: auto;
+        max-height: none;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Navigation                                                       */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-nav {
+    --pf-v5-c-nav--BackgroundColor: transparent;
+    --pf-v5-c-nav__list--PaddingTop: 0;
+    --pf-v5-c-nav__link--PaddingTop: 0;
+    --pf-v5-c-nav__link--PaddingBottom: 0;
+    --pf-v5-c-nav__link--PaddingLeft: 12px;
+    --pf-v5-c-nav__link--PaddingRight: 12px;
+    --pf-v5-c-nav__link--FontSize: 16px;
+    --pf-v5-c-nav__link--Color: var(--nomad-text);
+    --pf-v5-c-nav__link--hover--Color: var(--nomad-text);
+    --pf-v5-c-nav__link--focus--Color: var(--nomad-text);
+    --pf-v5-c-nav__link--active--Color: var(--nomad-text);
+    --pf-v5-c-nav__link--m-current--Color: var(--nomad-primary);
+    --pf-v5-c-nav__link--BackgroundColor: transparent;
+    --pf-v5-c-nav__link--hover--BackgroundColor: var(--nomad-hover);
+    --pf-v5-c-nav__link--focus--BackgroundColor: var(--nomad-hover);
+    --pf-v5-c-nav__link--active--BackgroundColor: var(--nomad-hover);
+    --pf-v5-c-nav__link--m-current--BackgroundColor: var(--nomad-primary-selected);
+    --pf-v5-c-nav__item--m-current--not--m-expanded__link--BackgroundColor: var(--nomad-primary-selected);
+    --pf-v5-c-nav__link--before--BorderColor: transparent;
+    --pf-v5-c-nav__link--after--BorderColor: transparent;
+    --pf-v5-c-nav__link--m-current--after--BorderColor: transparent;
+    --pf-v5-c-nav__item--before--BorderColor: transparent;
+    --pf-v5-c-nav__subnav__link--hover--after--BorderColor: transparent;
+    --pf-v5-c-nav__subnav__link--focus--after--BorderColor: transparent;
+    --pf-v5-c-nav__subnav__link--active--after--BorderColor: transparent;
+    --pf-v5-c-nav__subnav__link--m-current--after--BorderColor: transparent;
+    --pf-v5-c-nav__subnav--PaddingBottom: 0;
+    --pf-v5-c-nav__section--MarginTop: 0;
+    --pf-v5-c-nav__section--section--MarginTop: 0;
+    --pf-v5-c-nav__section-title--Color: var(--nomad-text-secondary);
+    --pf-v5-c-nav__section-title--BorderBottomColor: transparent;
+    --pf-v5-c-nav__toggle-icon--Color: var(--nomad-text-secondary);
+    background-color: transparent;
+}
+
+:root .pf-v5-c-page__sidebar-body {
+    padding: 0;
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: 8px;
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__subnav .pf-v5-c-nav__list {
+    padding: 4px 0 0 12px;
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__section .pf-v5-c-nav__list {
+    padding-top: 0;
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__item {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* nav groups: small grey caption + divider */
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__section + .pf-v5-c-nav__section,
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__section:not(:first-child) {
+    border-top: 1px solid var(--nomad-divider);
+}
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__section-title {
+    margin: 0;
+    padding: 12px 20px 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--nomad-text-secondary);
+    border: none;
+}
+
+:root .pf-v5-c-nav__link {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-height: 46px;
+    align-items: center;
+    margin: 0;
+    border-radius: var(--nomad-radius);
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+:root .pf-v5-c-nav__link::before,
+:root .pf-v5-c-nav__link::after {
+    border: none;
+}
+
+:root .pf-v5-c-nav__link.pf-m-current,
+:root .pf-v5-c-nav__item.pf-m-current:not(.pf-m-expanded) > .pf-v5-c-nav__link {
+    color: var(--nomad-primary);
+    font-weight: 700;
+    background-color: var(--nomad-primary-selected);
+}
+
+:root .pf-v5-c-nav__subnav {
+    --pf-v5-c-nav__subnav--PaddingLeft: 0;
+    padding: 0;
+}
+:root .pf-v5-c-nav__subnav::before {
+    border: none;
+}
+
+/*
+ * menu icons, as in the nomad-lab.eu settings menu: 20px, 8px before the
+ * label, grey (MUI action.active); primary blue on the current item.
+ */
+:root .pf-v5-c-page__sidebar .pf-v5-c-nav__link {
+    gap: 8px;
+}
+:root .nomad-nav-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    color: var(--nomad-action-active);
+}
+:root .nomad-nav-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+:root .pf-v5-c-nav__link.pf-m-current .nomad-nav-icon {
+    color: inherit;
+}
+:root .nomad-nav-label {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. Page content: header (title row) + one outlined paper card       */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-page__main-section {
+    --pf-v5-c-page__main-section--BackgroundColor: transparent;
+    --pf-v5-c-page__main-section--m-light--BackgroundColor: transparent;
+    --pf-v5-c-page__main-section--PaddingTop: 8px;
+    --pf-v5-c-page__main-section--PaddingBottom: 8px;
+    --pf-v5-c-page__main-section--PaddingLeft: 24px;
+    --pf-v5-c-page__main-section--PaddingRight: 24px;
+    --pf-v5-c-page__main-section--xl--PaddingTop: 8px;
+    --pf-v5-c-page__main-section--xl--PaddingBottom: 8px;
+    --pf-v5-c-page__main-section--xl--PaddingLeft: 24px;
+    --pf-v5-c-page__main-section--xl--PaddingRight: 24px;
+    background-color: transparent;
+}
+
+/*
+ * Top-level sections never grow to fill the window. PatternFly gives the
+ * last section (and .pf-m-fill) flex-grow: 1, which is what made the card
+ * cover the whole page.
+ */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section {
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    height: auto;
+    min-height: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* page header = the first section (title + description): no card */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:not(:last-of-type) {
+    margin-top: 0;
+    padding: 6px 0 0;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+/* page body = the last top-level section: white outlined paper card */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:last-of-type {
+    margin-top: 8px;
+    margin-bottom: 24px;
+    padding: 16px 16px 24px;
+    background-color: var(--nomad-paper);
+    border: 1px solid var(--nomad-divider);
+    border-radius: var(--nomad-radius);
+    box-shadow: var(--nomad-shadow-1);
+}
+
+/* sections nested inside the card (tab contents etc.): plain */
+:root .pf-v5-c-page__main-section .pf-v5-c-page__main-section {
+    margin: 0;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    flex-grow: 0;
+}
+
+/* toolbars (masthead, search / action rows above tables) */
+:root .pf-v5-c-toolbar {
+    --pf-v5-c-toolbar--BackgroundColor: transparent;
+    background-color: transparent;
+}
+
+/* ------------------------------------------------------------------ */
+/* 7. Typography                                                       */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-title,
+:root .pf-v5-c-content h1,
+:root .pf-v5-c-content h2,
+:root .pf-v5-c-content h3,
+:root .pf-v5-c-content h4 {
+    color: var(--nomad-text);
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+/* page title (header section) = NOMAD section header: 18px, 600, grey.800 */
+:root .pf-v5-c-page__main [data-testid="page-heading"] {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--nomad-heading);
+    margin: 0;
+}
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:not(:last-of-type) p {
+    font-size: 14px;
+    margin-top: 0;
+}
+
+:root .pf-v5-c-title.pf-m-xl,
+:root .pf-v5-c-title.pf-m-2xl,
+:root .pf-v5-c-title.pf-m-lg,
+:root .pf-v5-c-content h2,
+:root .pf-v5-c-content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--nomad-heading);
+}
+:root .pf-v5-c-title.pf-m-md,
+:root .pf-v5-c-content h4 {
+    font-size: 15px;
+}
+
+:root .pf-v5-c-content {
+    --pf-v5-c-content--Color: var(--nomad-text);
+    --pf-v5-c-content--a--Color: var(--nomad-primary);
+    --pf-v5-c-content--a--hover--Color: var(--nomad-primary-dark);
+}
+:root .pf-v5-c-content p,
+:root .pf-v5-c-content small,
+:root .pf-v5-c-helper-text,
+:root .pf-v5-c-form__helper-text {
+    color: var(--nomad-text-secondary);
+}
+
+/* ------------------------------------------------------------------ */
+/* 8. Forms                                                            */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-form {
+    --pf-v5-c-form--GridGap: 20px;
+}
+
+:root .pf-v5-c-form__label,
+:root .pf-v5-c-form__label-text {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--nomad-text-secondary);
+}
+:root .pf-v5-c-form__group-label {
+    --pf-v5-c-form__group-label--PaddingBottom: 4px;
+}
+
+:root .pf-v5-c-form-control input::placeholder {
+    font-style: italic;
+    color: var(--nomad-text-secondary);
+    opacity: 0.75;
+}
+:root .pf-v5-c-form__label-required {
+    color: var(--nomad-error);
+}
+
+:root .pf-v5-c-form-control {
+    --pf-v5-c-form-control--before--BorderStyle: solid;
+    --pf-v5-c-form-control--before--BorderTopColor: var(--nomad-input-border);
+    --pf-v5-c-form-control--before--BorderRightColor: var(--nomad-input-border);
+    --pf-v5-c-form-control--before--BorderBottomColor: var(--nomad-input-border);
+    --pf-v5-c-form-control--before--BorderLeftColor: var(--nomad-input-border);
+    /* PatternFly leaves the outline's bottom edge to the ::after underline
+       (made transparent above), so draw it on the outline itself */
+    --pf-v5-c-form-control--before--BorderBottomWidth: var(--pf-v5-global--BorderWidth--sm);
+    --pf-v5-c-form-control--after--BorderBottomColor: transparent;
+    --pf-v5-c-form-control--hover--after--BorderBottomColor: transparent;
+    --pf-v5-c-form-control--focus--after--BorderBottomColor: transparent;
+    color: var(--nomad-text);
+    background-color: var(--nomad-paper);
+    border-radius: var(--nomad-radius);
+}
+:root .pf-v5-c-form-control::before,
+:root .pf-v5-c-form-control::after {
+    border-radius: var(--nomad-radius);
+}
+:root .pf-v5-c-form-control:hover::before {
+    border-color: var(--nomad-text);
+}
+:root .pf-v5-c-form-control:focus-within::before {
+    border-color: var(--nomad-primary);
+    border-width: 2px;
+}
+
+:root .pf-v5-c-form-control.pf-m-readonly,
+:root .pf-v5-c-form-control.pf-m-disabled {
+    background-color: var(--nomad-highlight);
+    color: var(--nomad-text-secondary);
+}
+:root .pf-v5-c-form-control.pf-m-readonly:hover::before,
+:root .pf-v5-c-form-control.pf-m-disabled:hover::before {
+    border-color: var(--nomad-input-border);
+}
+
+:root .pf-v5-c-form-control.pf-m-error::before,
+:root .pf-v5-c-form-control.pf-m-error:hover::before {
+    border-color: var(--nomad-error);
+}
+:root .pf-v5-c-helper-text__item.pf-m-error {
+    color: var(--nomad-error);
+}
+
+:root .pf-v5-c-check__input,
+:root .pf-v5-c-radio__input {
+    accent-color: var(--nomad-primary);
+}
+:root .pf-v5-c-switch {
+    --pf-v5-c-switch__input--checked__toggle--BackgroundColor: var(--nomad-primary);
+}
+
+/* ------------------------------------------------------------------ */
+/* 9. Buttons                                                          */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-button {
+    --pf-v5-c-button--BorderRadius: var(--nomad-radius);
+    --pf-v5-c-button--after--BorderRadius: var(--nomad-radius);
+    --pf-v5-c-button--FontWeight: 700;
+    --pf-v5-c-button--PaddingTop: 6px;
+    --pf-v5-c-button--PaddingBottom: 6px;
+    --pf-v5-c-button--PaddingLeft: 16px;
+    --pf-v5-c-button--PaddingRight: 16px;
+}
+
+:root .pf-v5-c-button:is(.pf-m-primary, .pf-m-secondary, .pf-m-tertiary, .pf-m-danger, .pf-m-warning) {
+    font-size: 14px;
+    line-height: 1.75;
+    letter-spacing: 0.02857em;
+    text-transform: uppercase;
+}
+
+:root .pf-v5-c-button.pf-m-primary {
+    --pf-v5-c-button--m-primary--BackgroundColor: var(--nomad-primary);
+    --pf-v5-c-button--m-primary--Color: var(--nomad-on-primary);
+    --pf-v5-c-button--m-primary--hover--BackgroundColor: var(--nomad-primary-dark);
+    --pf-v5-c-button--m-primary--hover--Color: var(--nomad-on-primary);
+    --pf-v5-c-button--m-primary--focus--BackgroundColor: var(--nomad-primary-dark);
+    --pf-v5-c-button--m-primary--focus--Color: var(--nomad-on-primary);
+    --pf-v5-c-button--m-primary--active--BackgroundColor: var(--nomad-primary-dark);
+    --pf-v5-c-button--m-primary--active--Color: var(--nomad-on-primary);
+}
+
+:root .pf-v5-c-button.pf-m-secondary:not(.pf-m-danger) {
+    --pf-v5-c-button--m-secondary--Color: var(--nomad-primary);
+    --pf-v5-c-button--m-secondary--BackgroundColor: transparent;
+    --pf-v5-c-button--m-secondary--after--BorderColor: var(--nomad-primary-outline);
+    --pf-v5-c-button--m-secondary--hover--Color: var(--nomad-primary);
+    --pf-v5-c-button--m-secondary--hover--BackgroundColor: var(--nomad-primary-hover);
+    --pf-v5-c-button--m-secondary--hover--after--BorderColor: var(--nomad-primary);
+    --pf-v5-c-button--m-secondary--focus--Color: var(--nomad-primary);
+    --pf-v5-c-button--m-secondary--focus--BackgroundColor: var(--nomad-primary-hover);
+    --pf-v5-c-button--m-secondary--focus--after--BorderColor: var(--nomad-primary);
+    --pf-v5-c-button--m-secondary--active--Color: var(--nomad-primary);
+    --pf-v5-c-button--m-secondary--active--BackgroundColor: var(--nomad-primary-selected);
+    --pf-v5-c-button--m-secondary--active--after--BorderColor: var(--nomad-primary);
+}
+:root .pf-v5-c-button.pf-m-secondary::after,
+:root .pf-v5-c-button.pf-m-tertiary::after {
+    border-width: 1px;
+}
+
+:root .pf-v5-c-button.pf-m-tertiary {
+    --pf-v5-c-button--m-tertiary--Color: var(--nomad-text);
+    --pf-v5-c-button--m-tertiary--BackgroundColor: transparent;
+    --pf-v5-c-button--m-tertiary--after--BorderColor: var(--nomad-input-border);
+    --pf-v5-c-button--m-tertiary--hover--Color: var(--nomad-text);
+    --pf-v5-c-button--m-tertiary--hover--BackgroundColor: var(--nomad-hover);
+    --pf-v5-c-button--m-tertiary--hover--after--BorderColor: var(--nomad-text);
+}
+
+:root .pf-v5-c-button.pf-m-link {
+    --pf-v5-c-button--m-link--Color: var(--nomad-primary);
+    --pf-v5-c-button--m-link--hover--Color: var(--nomad-primary-dark);
+    --pf-v5-c-button--m-link--focus--Color: var(--nomad-primary-dark);
+    --pf-v5-c-button--m-link--active--Color: var(--nomad-primary-dark);
+}
+:root .pf-v5-c-button.pf-m-link:not(.pf-m-inline) {
+    --pf-v5-c-button--m-link--hover--BackgroundColor: var(--nomad-primary-hover);
+}
+
+:root .pf-v5-c-button.pf-m-danger {
+    --pf-v5-c-button--m-danger--BackgroundColor: var(--nomad-error);
+    --pf-v5-c-button--m-danger--hover--BackgroundColor: var(--nomad-error);
+}
+
+:root .pf-v5-c-button:focus-visible {
+    outline: 2px solid var(--nomad-primary);
+    outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/* 10. Lists, tables, cards                                            */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-data-list {
+    --pf-v5-c-data-list--BackgroundColor: transparent;
+    --pf-v5-c-data-list--BorderTopColor: var(--nomad-divider);
+    --pf-v5-c-data-list__item--BackgroundColor: transparent;
+    --pf-v5-c-data-list__item--BorderBottomColor: var(--nomad-divider);
+    --pf-v5-c-data-list__item--m-selectable--hover--BackgroundColor: var(--nomad-hover);
+}
+
+:root .pf-v5-c-table {
+    --pf-v5-c-table--BackgroundColor: transparent;
+    --pf-v5-c-table--BorderColor: var(--nomad-divider);
+    --pf-v5-c-table--cell--Color: var(--nomad-text);
+}
+:root .pf-v5-c-table thead th,
+:root .pf-v5-c-table__th {
+    font-weight: 700;
+    color: var(--nomad-text);
+}
+:root .pf-v5-c-table tbody tr:hover {
+    background-color: var(--nomad-hover);
+}
+
+:root .pf-v5-c-pagination {
+    --pf-v5-c-pagination--BackgroundColor: transparent;
+    background-color: transparent;
+}
+
+:root .pf-v5-c-card {
+    --pf-v5-c-card--BackgroundColor: var(--nomad-paper);
+    --pf-v5-c-card--BoxShadow: none;
+    border: 1px solid var(--nomad-divider);
+    border-radius: var(--nomad-radius);
+}
+
+:root .pf-v5-c-expandable-section__toggle {
+    --pf-v5-c-expandable-section__toggle--Color: var(--nomad-primary);
+    --pf-v5-c-expandable-section__toggle--hover--Color: var(--nomad-primary-dark);
+}
+
+/* ------------------------------------------------------------------ */
+/* 11. Small components                                                */
+/* ------------------------------------------------------------------ */
+:root .pf-v5-c-label {
+    --pf-v5-c-label--BorderRadius: var(--nomad-radius);
+    --pf-v5-c-label--BackgroundColor: var(--nomad-primary-selected);
+    --pf-v5-c-label__content--Color: var(--nomad-primary);
+    --pf-v5-c-label__content--before--BorderColor: transparent;
+    font-weight: 600;
+}
+
+:root .pf-v5-c-badge {
+    --pf-v5-c-badge--m-unread--BackgroundColor: var(--nomad-primary);
+    --pf-v5-c-badge--m-unread--Color: var(--nomad-on-primary);
+}
+
+/* tabs: the admin console's main navigation inside a page */
+:root .pf-v5-c-tabs {
+    --pf-v5-c-tabs--BackgroundColor: transparent;
+    --pf-v5-c-tabs--before--BorderColor: var(--nomad-divider);
+    --pf-v5-c-tabs__link--BackgroundColor: transparent;
+    --pf-v5-c-tabs__link--Color: var(--nomad-text-secondary);
+    --pf-v5-c-tabs__item--m-current__link--Color: var(--nomad-primary);
+    --pf-v5-c-tabs__link--after--BorderColor: transparent;
+    --pf-v5-c-tabs__item--m-current__link--after--BorderColor: var(--nomad-primary);
+    --pf-v5-c-tabs__link--hover--after--BorderColor: var(--nomad-primary-outline);
+}
+:root .pf-v5-c-tabs__link {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02857em;
+    font-size: 14px;
+}
+/* top tabs inside the card: keep them inside the rounded corners */
+:root .pf-v5-c-page__main > .pf-v5-c-page__main-section:last-of-type > .pf-v5-c-tabs:first-child {
+    padding: 0 8px;
+}
+
+:root .pf-v5-c-alert {
+    --pf-v5-c-alert--BoxShadow: none;
+    border-radius: var(--nomad-radius);
+}
+:root .pf-v5-c-alert.pf-m-info {
+    --pf-v5-c-alert--BackgroundColor: var(--nomad-info-bg);
+    --pf-v5-c-alert--BorderTopColor: var(--nomad-info);
+    --pf-v5-c-alert__icon--Color: var(--nomad-info);
+}
+:root .pf-v5-c-alert.pf-m-success {
+    --pf-v5-c-alert--BackgroundColor: var(--nomad-success-bg);
+    --pf-v5-c-alert--BorderTopColor: var(--nomad-success);
+    --pf-v5-c-alert__icon--Color: var(--nomad-success);
+}
+:root .pf-v5-c-alert.pf-m-danger {
+    --pf-v5-c-alert--BackgroundColor: var(--nomad-error-bg);
+    --pf-v5-c-alert--BorderTopColor: var(--nomad-error);
+    --pf-v5-c-alert__icon--Color: var(--nomad-error);
+}
+
+:root .pf-v5-c-menu {
+    --pf-v5-c-menu--BackgroundColor: var(--nomad-paper);
+    --pf-v5-c-menu--BoxShadow: var(--nomad-shadow-menu);
+    --pf-v5-c-menu__item--hover--BackgroundColor: var(--nomad-hover);
+    border-radius: var(--nomad-radius);
+    overflow: hidden;
+}
+
+:root .pf-v5-c-modal-box {
+    --pf-v5-c-modal-box--BackgroundColor: var(--nomad-paper);
+    border-radius: var(--nomad-radius);
+}
+:root .pf-v5-c-modal-box__title {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+:root .pf-v5-c-empty-state__icon {
+    color: var(--nomad-primary);
+}
+
+:root .pf-v5-c-tooltip__content {
+    --pf-v5-c-tooltip__content--BackgroundColor: var(--nomad-primary-dark);
+    font-size: 13px;
+}

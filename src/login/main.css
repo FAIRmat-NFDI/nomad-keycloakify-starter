@@ -1,0 +1,572 @@
+@import url(./assets/fonts/titilliumweb/main.css);
+
+/*
+ * NOMAD style for the Keycloak login pages (Keycloak's PatternFly 4 + 3 CSS).
+ *
+ * Follows the nomad-lab.eu MUI theme: Titillium Web, primary #2A4CDF /
+ * dark #192E86, background #F8F8FA, outlined paper card with 8px radius,
+ * h1 26px bold, bold uppercase buttons, outlined 8px inputs. Same tokens as
+ * src/account/main.css.
+ *
+ * Keycloak's stylesheets are inserted at runtime after this one, so every
+ * rule is prefixed with `:root` to win on specificity.
+ *
+ * Dark mode: KcPage.tsx sets `nomad-dark` on <html> (see shared/isDark.ts).
+ */
+
+/* ------------------------------------------------------------------ */
+/* 1. Design tokens                                                    */
+/* ------------------------------------------------------------------ */
+:root {
+    --nomad-font: "Titillium Web", "Helvetica Neue", Arial, sans-serif;
+    --nomad-radius: 8px;
+
+    --nomad-primary: #2a4cdf;
+    --nomad-primary-dark: #192e86;
+    --nomad-on-primary: #ffffff;
+    --nomad-primary-hover: rgba(42, 76, 223, 0.04);
+    --nomad-primary-outline: rgba(42, 76, 223, 0.5);
+
+    --nomad-bg: #f8f8fa;
+    --nomad-paper: #ffffff;
+    --nomad-highlight: #efeff7;
+    --nomad-text: #1d1d1d;
+    --nomad-text-secondary: #666666;
+    --nomad-divider: rgba(0, 0, 0, 0.12);
+    --nomad-input-border: rgba(0, 0, 0, 0.23);
+    --nomad-hover: rgba(0, 0, 0, 0.04);
+    --nomad-error: #c10007;
+    --nomad-error-bg: #fef2f2;
+    --nomad-info: #1447e6;
+    --nomad-info-bg: #eff6ff;
+    --nomad-success: #007a55;
+    --nomad-success-bg: #ecfdf5;
+    --nomad-warning: #bb4d0e;
+    --nomad-warning-bg: #fffbeb;
+    --nomad-shadow-1: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+        0 1px 3px 0 rgba(0, 0, 0, 0.12);
+}
+
+:root.nomad-dark {
+    color-scheme: dark;
+
+    --nomad-primary: #8b8cec;
+    --nomad-primary-dark: #6162a5;
+    --nomad-on-primary: #121212;
+    --nomad-primary-hover: rgba(139, 140, 236, 0.08);
+    --nomad-primary-outline: rgba(139, 140, 236, 0.5);
+
+    --nomad-bg: #121212;
+    --nomad-paper: #1c2026;
+    --nomad-highlight: #25262d;
+    --nomad-text: rgba(255, 255, 255, 0.85);
+    --nomad-text-secondary: rgba(255, 255, 255, 0.7);
+    --nomad-divider: rgba(255, 255, 255, 0.12);
+    --nomad-input-border: rgba(255, 255, 255, 0.23);
+    --nomad-hover: rgba(255, 255, 255, 0.08);
+    --nomad-error: #ffc9c9;
+    --nomad-error-bg: #5c1a1f;
+    --nomad-info: #ccf0ff;
+    --nomad-info-bg: #263340;
+    --nomad-success: #c4ffe0;
+    --nomad-success-bg: #37674c;
+    --nomad-warning: #ffe5c4;
+    --nomad-warning-bg: #88522f;
+    --nomad-shadow-1: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Map tokens onto PatternFly 4 globals                             */
+/* ------------------------------------------------------------------ */
+:root,
+:root body {
+    --pf-global--FontFamily--sans-serif: var(--nomad-font);
+    --pf-global--FontFamily--heading--sans-serif: var(--nomad-font);
+    --pf-global--primary-color--100: var(--nomad-primary);
+    --pf-global--primary-color--200: var(--nomad-primary-dark);
+    --pf-global--link--Color: var(--nomad-primary);
+    --pf-global--link--Color--hover: var(--nomad-primary-dark);
+    --pf-global--BackgroundColor--100: var(--nomad-paper);
+    --pf-global--BackgroundColor--200: var(--nomad-bg);
+    --pf-global--Color--100: var(--nomad-text);
+    --pf-global--Color--200: var(--nomad-text-secondary);
+    --pf-global--Color--300: var(--nomad-text-secondary);
+    --pf-global--palette--black-600: var(--nomad-text-secondary);
+    --pf-global--BorderColor--100: var(--nomad-divider);
+    --pf-global--BorderColor--200: var(--nomad-input-border);
+    --pf-global--BorderColor--300: var(--nomad-input-border);
+    --pf-global--danger-color--100: var(--nomad-error);
+    --pf-global--danger-color--200: var(--nomad-error);
+    --pf-global--BorderRadius--sm: var(--nomad-radius);
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Page                                                             */
+/* ------------------------------------------------------------------ */
+:root.login-pf {
+    background-color: var(--nomad-bg);
+}
+:root body,
+:root .login-pf body {
+    min-height: 100vh;
+    font-family: var(--nomad-font);
+    color: var(--nomad-text);
+    background: var(--nomad-bg);
+    -webkit-font-smoothing: antialiased;
+}
+
+:root a,
+:root a:visited {
+    color: var(--nomad-primary);
+}
+:root a:hover,
+:root a:focus {
+    color: var(--nomad-primary-dark);
+}
+
+/* logo above the card; the right variant for the colour scheme */
+:root #kc-header {
+    color: var(--nomad-text);
+    margin-bottom: 24px;
+}
+:root #kc-header-wrapper {
+    padding: 48px 16px 0;
+    text-align: center;
+}
+:root .nomad-logo {
+    width: 200px;
+    max-width: 60vw;
+    height: auto;
+}
+:root .nomad-logo-dark,
+:root.nomad-dark .nomad-logo-light {
+    display: none;
+}
+:root.nomad-dark .nomad-logo-dark {
+    display: inline;
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. Card (MUI outlined Paper)                                        */
+/* ------------------------------------------------------------------ */
+:root .login-pf-page .card-pf {
+    max-width: 480px;
+    margin: 0 auto 48px;
+    padding: 24px 32px 32px;
+    color: var(--nomad-text);
+    background-color: var(--nomad-paper);
+    border: 1px solid var(--nomad-divider);
+    border-radius: var(--nomad-radius);
+    box-shadow: var(--nomad-shadow-1);
+}
+
+:root .login-pf-page .login-pf-header {
+    margin-bottom: 16px;
+    padding: 0;
+}
+
+/* pages with required fields (register...): title first, then the
+   "* Required fields" note, both left-aligned (no Bootstrap columns) */
+:root .login-pf-header .kcContentWrapperClass {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 4px;
+    margin: 0;
+}
+:root .login-pf-header .kcContentWrapperClass > div {
+    float: none;
+    width: auto;
+    padding: 0;
+}
+:root .login-pf-header .subtitle {
+    font-size: 13px;
+    color: var(--nomad-text-secondary);
+    text-align: left;
+}
+
+/* h1 as on nomad-lab.eu: 26px bold, line-height 1.3em */
+:root #kc-page-title {
+    margin: 0;
+    font-family: var(--nomad-font);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.3em;
+    color: var(--nomad-text);
+    text-align: left;
+}
+
+:root .login-pf-page h2,
+:root #kc-social-providers h2 {
+    font-family: var(--nomad-font);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.4em;
+    color: var(--nomad-text);
+}
+
+:root .login-pf-page hr {
+    border-top-color: var(--nomad-divider);
+}
+
+/* phones: card fills the width, like on small screens on the site */
+@media (max-width: 767px) {
+    :root .login-pf-page .card-pf {
+        margin: 0 16px 32px;
+        padding: 16px 20px 24px;
+        border: 1px solid var(--nomad-divider);
+        box-shadow: none;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Forms (MUI outlined TextField)                                   */
+/* ------------------------------------------------------------------ */
+:root .login-pf-page .form-group {
+    margin-bottom: 20px;
+}
+
+:root .pf-c-form__label,
+:root .pf-c-form__label-text,
+:root .login-pf-page label {
+    font-family: var(--nomad-font);
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--nomad-text-secondary);
+}
+:root .login-pf-page .pf-c-form__label {
+    padding-bottom: 4px;
+}
+:root .required,
+:root .pf-c-form__label-required {
+    color: var(--nomad-error);
+}
+
+:root .pf-c-form-control,
+:root .login-pf-page .form-control {
+    --pf-c-form-control--BorderTopColor: var(--nomad-input-border);
+    --pf-c-form-control--BorderRightColor: var(--nomad-input-border);
+    --pf-c-form-control--BorderBottomColor: var(--nomad-input-border);
+    --pf-c-form-control--BorderLeftColor: var(--nomad-input-border);
+    --pf-c-form-control--hover--BorderBottomColor: var(--nomad-text);
+    --pf-c-form-control--focus--BorderBottomColor: var(--nomad-primary);
+    --pf-c-form-control--focus--BorderBottomWidth: 1px;
+    --pf-c-form-control--focus--PaddingBottom: var(--pf-c-form-control--PaddingBottom);
+    height: 40px;
+    padding: 8px 14px;
+    font-family: var(--nomad-font);
+    font-size: 16px;
+    color: var(--nomad-text);
+    background-color: var(--nomad-paper);
+    border: 1px solid var(--nomad-input-border);
+    border-radius: var(--nomad-radius);
+    box-shadow: none;
+    transition: border-color 150ms, box-shadow 150ms;
+}
+:root textarea.pf-c-form-control {
+    height: auto;
+}
+:root .pf-c-form-control:hover,
+:root .login-pf-page .form-control:hover {
+    border-color: var(--nomad-text);
+}
+:root .pf-c-form-control:focus,
+:root .login-pf-page .form-control:focus {
+    border-color: var(--nomad-primary);
+    box-shadow: inset 0 0 0 1px var(--nomad-primary);
+    outline: none;
+}
+:root .pf-c-form-control[aria-invalid="true"],
+:root .pf-c-form-control[aria-invalid="true"]:hover,
+:root .pf-c-form-control[aria-invalid="true"]:focus {
+    border-color: var(--nomad-error);
+    box-shadow: none;
+    background-image: none;
+}
+:root .pf-c-form-control::placeholder {
+    font-style: italic;
+    color: var(--nomad-text-secondary);
+    opacity: 0.75;
+}
+
+/* password field + eye button: one outlined field */
+:root .pf-c-input-group {
+    --pf-c-input-group--BackgroundColor: transparent;
+    background-color: transparent;
+}
+:root .pf-c-input-group > .pf-c-form-control {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+:root .pf-c-input-group > .pf-c-button.pf-m-control {
+    height: 40px;
+    color: var(--nomad-text-secondary);
+    background-color: var(--nomad-paper);
+    border: 1px solid var(--nomad-input-border);
+    border-left: none;
+    border-radius: 0 var(--nomad-radius) var(--nomad-radius) 0;
+}
+:root .pf-c-input-group > .pf-c-button.pf-m-control::after {
+    border: none;
+}
+:root .pf-c-input-group > .pf-c-form-control:hover + .pf-c-button.pf-m-control {
+    border-color: var(--nomad-text);
+}
+:root .pf-c-input-group > .pf-c-form-control:focus + .pf-c-button.pf-m-control {
+    border-color: var(--nomad-primary);
+}
+:root .pf-c-input-group > .pf-c-form-control[aria-invalid="true"] + .pf-c-button.pf-m-control {
+    border-color: var(--nomad-error);
+}
+
+:root .pf-c-form__helper-text,
+:root .kc-feedback-text,
+:root #input-error,
+:root [id^="input-error"] {
+    font-size: 13px;
+    color: var(--nomad-error);
+}
+
+:root .login-pf-page input[type="checkbox"],
+:root .login-pf-page input[type="radio"] {
+    accent-color: var(--nomad-primary);
+}
+
+/* "Remember me" + "Forgot password?" row */
+:root .login-pf-page .login-pf-settings {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 14px;
+}
+:root .login-pf-page .login-pf-settings .checkbox {
+    margin: 0;
+}
+:root .login-pf-page .login-pf-settings label {
+    font-size: 14px;
+    color: var(--nomad-text);
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. Buttons (MUI contained / outlined)                               */
+/* ------------------------------------------------------------------ */
+:root .pf-c-button.kcButtonClass,
+:root .login-pf-page .btn {
+    min-height: 36px;
+    padding: 6px 16px;
+    font-family: var(--nomad-font);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.75;
+    letter-spacing: 0.02857em;
+    text-transform: uppercase;
+    border-radius: var(--nomad-radius);
+    box-shadow: none;
+    background-image: none;
+    text-shadow: none;
+}
+:root .pf-c-button.kcButtonClass::after {
+    border-radius: var(--nomad-radius);
+}
+:root .pf-c-button.kcButtonClass.pf-m-block {
+    width: 100%;
+}
+:root .pf-c-button.btn-lg {
+    min-height: 42px;
+    font-size: 15px;
+}
+
+/* contained primary */
+:root .pf-c-button.pf-m-primary,
+:root .login-pf-page .btn-primary {
+    color: var(--nomad-on-primary);
+    background-color: var(--nomad-primary);
+    border: none;
+}
+:root .pf-c-button.pf-m-primary:hover,
+:root .pf-c-button.pf-m-primary:focus,
+:root .pf-c-button.pf-m-primary:active,
+:root .login-pf-page .btn-primary:hover,
+:root .login-pf-page .btn-primary:focus,
+:root .login-pf-page .btn-primary:active {
+    color: var(--nomad-on-primary);
+    background-color: var(--nomad-primary-dark);
+}
+:root .pf-c-button.pf-m-primary::after {
+    border: none;
+}
+:root .pf-c-button.pf-m-primary:disabled,
+:root .pf-c-button.pf-m-primary.pf-m-disabled {
+    opacity: 0.5;
+}
+
+/* outlined secondary / default */
+:root .pf-c-button.kcButtonDefaultClass,
+:root .pf-c-button.pf-m-secondary,
+:root .login-pf-page .btn-default {
+    color: var(--nomad-primary);
+    background-color: transparent;
+    border: 1px solid var(--nomad-primary-outline);
+}
+:root .pf-c-button.kcButtonDefaultClass:hover,
+:root .pf-c-button.pf-m-secondary:hover,
+:root .login-pf-page .btn-default:hover {
+    color: var(--nomad-primary);
+    background-color: var(--nomad-primary-hover);
+    border-color: var(--nomad-primary);
+}
+:root .pf-c-button.kcButtonDefaultClass::after,
+:root .pf-c-button.pf-m-secondary::after {
+    border: none;
+}
+
+:root .pf-c-button:focus-visible,
+:root .login-pf-page .btn:focus-visible {
+    outline: 2px solid var(--nomad-primary);
+    outline-offset: 2px;
+}
+
+:root #kc-form-buttons {
+    margin-top: 24px;
+}
+
+/* identity providers (e.g. ORCID): outlined buttons */
+:root #kc-social-providers hr {
+    margin: 24px 0 16px;
+}
+:root #kc-social-providers h2 {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: var(--nomad-text-secondary);
+    text-align: center;
+}
+:root #kc-social-providers ul {
+    display: grid;
+    gap: 8px;
+    padding: 0;
+}
+:root #kc-social-providers .pf-c-button.pf-m-control,
+:root #kc-social-providers a.pf-c-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 40px;
+    margin: 0;
+    font-weight: 700;
+    color: var(--nomad-text);
+    background-color: transparent;
+    border: 1px solid var(--nomad-input-border);
+    border-radius: var(--nomad-radius);
+}
+:root #kc-social-providers .pf-c-button.pf-m-control::after {
+    border: none;
+}
+:root #kc-social-providers .pf-c-button:hover {
+    background-color: var(--nomad-hover);
+    border-color: var(--nomad-text);
+}
+:root .kc-social-gray,
+:root .kc-social-provider-name {
+    color: var(--nomad-text);
+}
+
+/* ------------------------------------------------------------------ */
+/* 7. Alerts                                                           */
+/* ------------------------------------------------------------------ */
+:root .pf-c-alert {
+    --pf-c-alert--BoxShadow: none;
+    --pf-c-alert--BorderTopWidth: 0;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    color: var(--nomad-info);
+    background-color: var(--nomad-info-bg);
+    border: none;
+    border-radius: var(--nomad-radius);
+}
+:root .pf-c-alert.pf-m-danger {
+    color: var(--nomad-error);
+    background-color: var(--nomad-error-bg);
+}
+:root .pf-c-alert.pf-m-success {
+    color: var(--nomad-success);
+    background-color: var(--nomad-success-bg);
+}
+:root .pf-c-alert.pf-m-warning {
+    color: var(--nomad-warning);
+    background-color: var(--nomad-warning-bg);
+}
+:root .pf-c-alert .pf-c-alert__icon,
+:root .pf-c-alert .pf-c-alert__title {
+    color: inherit;
+}
+:root .pf-c-alert .pf-c-alert__title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ */
+/* 8. Info area ("New user? Register"), lists, locale menu             */
+/* ------------------------------------------------------------------ */
+:root #kc-info {
+    margin: 24px -32px -32px;
+}
+:root #kc-info-wrapper {
+    padding: 16px 32px;
+    font-size: 14px;
+    color: var(--nomad-text-secondary);
+    text-align: center;
+    background-color: var(--nomad-highlight);
+    border-top: 1px solid var(--nomad-divider);
+    border-radius: 0 0 var(--nomad-radius) var(--nomad-radius);
+}
+@media (max-width: 767px) {
+    :root #kc-info {
+        margin: 24px -20px -24px;
+    }
+}
+
+/* "Try another way" / authenticator selection */
+:root .select-auth-box-parent {
+    border-radius: var(--nomad-radius);
+}
+:root .select-auth-box-parent:hover {
+    background-color: var(--nomad-hover);
+}
+:root .select-auth-box-headline {
+    color: var(--nomad-primary);
+}
+:root .select-auth-box-desc,
+:root .select-auth-box-paragraph {
+    color: var(--nomad-text-secondary);
+}
+
+:root #kc-totp-secret-key {
+    color: var(--nomad-text);
+    background-color: var(--nomad-highlight);
+    border-radius: var(--nomad-radius);
+}
+
+:root #kc-current-locale-link {
+    color: var(--nomad-text-secondary);
+}
+:root #kc-locale ul {
+    background-color: var(--nomad-paper);
+    border: 1px solid var(--nomad-divider);
+    border-radius: var(--nomad-radius);
+}
+:root #kc-locale ul li a {
+    color: var(--nomad-text);
+}
+:root #kc-locale ul li a:hover {
+    background-color: var(--nomad-hover);
+}
+
+:root #kc-username label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--nomad-text);
+}
