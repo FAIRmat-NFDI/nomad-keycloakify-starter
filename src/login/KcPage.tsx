@@ -19,27 +19,47 @@ const doMakeUserConfirmPassword = true;
 
 export default function KcPage(props: { kcContext: KcContext }) {
     const { kcContext } = props;
+
     const { i18n } = useI18n({ kcContext });
+
+    if (
+        kcContext.pageId === "idp-review-user-profile.ftl" &&
+        hasEditableUsername(kcContext) &&
+        !hasProfileValidationErrors(kcContext)
+    ) {
+        const username = kcContext.profile.attributesByName.username;
+        username.values = [];
+        delete username.value;
+    }
 
     return (
         <Suspense>
-            {(() => {
-                switch (kcContext.pageId) {
-                    default:
-                        return (
-                            <DefaultPage
-                                kcContext={kcContext}
-                                i18n={i18n}
-                                classes={classes}
-                                Template={Template}
-                                doUseDefaultCss={true}
-                                UserProfileFormFields={UserProfileFormFields}
-                                doMakeUserConfirmPassword={doMakeUserConfirmPassword}
-                            />
-                        );
-                }
-            })()}
+            <DefaultPage
+                kcContext={kcContext}
+                i18n={i18n}
+                classes={classes}
+                Template={Template}
+                doUseDefaultCss={true}
+                UserProfileFormFields={UserProfileFormFields}
+                doMakeUserConfirmPassword={doMakeUserConfirmPassword}
+            />
         </Suspense>
+    );
+}
+
+type IdpReviewContext = Extract<KcContext, { pageId: "idp-review-user-profile.ftl" }>;
+
+function hasEditableUsername(kcContext: IdpReviewContext): boolean {
+    const username = kcContext.profile.attributesByName.username;
+    return username !== undefined && !username.readOnly;
+}
+
+function hasProfileValidationErrors(kcContext: IdpReviewContext): boolean {
+    const { profile, messagesPerField, message } = kcContext;
+
+    return (
+        message?.type === "error" ||
+        messagesPerField.existsError("global", ...Object.keys(profile.attributesByName))
     );
 }
 
